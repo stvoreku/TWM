@@ -10,6 +10,8 @@ BW3 = logical((1 - BW1) + (1 - BW2));
 
 HSV = rgb2hsv(orgImg);
 H = HSV(:,:,1);
+S = HSV(:,:,2);
+V = HSV(:,:,3);
 
 props = regionprops(BW5, {'Area', 'Eccentricity', 'EquivDiameter', 'BoundingBox', 'PixelIdxList', 'Centroid'});
 
@@ -17,7 +19,13 @@ out = orgImg;
 for i=1:size(properties, 1)
     if props(i).Area > 500
         avg_h = mean(H(props(i).PixelIdxList));
+        avg_s = mean(S(props(i).PixelIdxList));
+        avg_v = mean(V(props(i).PixelIdxList));
+        
         labelH = sprintf("%.3f", avg_h);
+        labelS = sprintf("%.3f", avg_s);
+        labelV = sprintf("%.3f", avg_v);
+        
         color = hsv2rgb([avg_h, 1, 1]) * 255;
         if avg_h < 0.1
             label = " Red";
@@ -37,7 +45,7 @@ for i=1:size(properties, 1)
             shape = "rectangle";
             pos = props(i).BoundingBox;
         end
-        out = insertObjectAnnotation(out, shape, pos, shape+ ' ' +label+ ' ' +labelH) ;
+        out = insertObjectAnnotation(out, shape, pos, shape+ ' ' +label+ 'H:'+labelH+'S:'+labelS+'V:'+labelV) ;
     end
 end
 imshow(out);
