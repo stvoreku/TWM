@@ -27,7 +27,9 @@ for i=1:size(properties, 1)
         labelV = sprintf("%.3f", avg_v);
         
         color = hsv2rgb([avg_h, 1, 1]) * 255;
-        if avg_h < 0.1
+        if avg_v > 0.90
+            label = " White";
+        elseif avg_h < 0.1
             label = " Red";
         elseif (avg_h > 0.1) & (avg_h < 0.20)
             label = " Yellow";
@@ -35,7 +37,7 @@ for i=1:size(properties, 1)
             label = " Green";
         elseif (avg_h > 0.45) & (avg_h < 0.75)
             label = " Blue";
-        else avg_h > 0.90
+        elseif avg_h > 0.90
             label = " Pink";
         end
         if props(i).Eccentricity < 0.3
