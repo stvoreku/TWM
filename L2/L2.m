@@ -1,4 +1,4 @@
-orgImg = imread("IMG_5772.jpg");
+orgImg = imread("obraz_testowy.jpg");
 
 % -- Tworzenie i filtracja maski -- %
 [BW1, imge1] = createMaskColorful(orgImg);
