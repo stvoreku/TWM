@@ -18,7 +18,7 @@ V = HSV(:,:,3);
 % -- Detekcja rejonow -- %
 props = regionprops(BW5, {"MajorAxisLength", "MinorAxisLength", 'Area', 'Eccentricity', 'EquivDiameter', 'BoundingBox', 'PixelIdxList', 'Centroid'});
 
-% -- Oznaczanie obiektów -- %
+% -- Oznaczanie obiektÃ³w -- %
 out = orgImg;
 for i=1:size(properties, 1)
     if props(i).Area > 500
@@ -45,9 +45,9 @@ for i=1:size(properties, 1)
         elseif avg_h > 0.90
             color_l = " Pink";
         end
-        % Jezeli kolor jest zbyt jasny (niska saturacja, wysoka wartoœæ)
-        % lub zbyt ciemny (niska wartoœæ i saturacja), barwa jest
-        % nieistotna; mozna nadpisac kolor
+        
+        % Jezeli kolor jest zbyt jasny (niska saturacja, wysoka wartoÅ›Ä‡)
+        % lub zbyt ciemny (niska)
         if (avg_v < 0.32) & (avg_s < 0.4)
             color_l = " Black";
         elseif (avg_s < 0.25)
@@ -57,13 +57,9 @@ for i=1:size(properties, 1)
                 color_l = " White";
             end
         end
-        % UWAGA: ze wzgledu na warunki swietlne nie da sie dobrze wykryc
-        % jasnoniebieskiego; jest tak poniewaz na zdjeciu kolor ten
-        % jest blizej bieli niz karta biala
-
         
 
-        % -- Oznaczenie kszta³tu -- %
+        % -- Oznaczenie ksztaÅ‚tu -- %
         if props(i).Eccentricity < 0.3
             shape = "circle";
             pos = [props(i).Centroid, props(i).EquivDiameter/2];
