@@ -42,6 +42,9 @@ for i=1:size(properties, 1)
             color_l = " Green";
         elseif (avg_h > 0.45) & (avg_h < 0.75)
             color_l = " Blue";
+            if avg_v < 0.5
+                color_l = " Dark blue";
+            end
         elseif avg_h > 0.90
             color_l = " Pink";
         end
