@@ -15,7 +15,8 @@ Na ile wcze¶niejsze zatrzymanie pomaga?
 
 Zrobiæ ten sam problem klasyfikacji, ale za pomoc± SVN
 
-U¿yæ SVN funkcji biliotek, dwa parametry regularyzacyjne, wersja z kernelem (nieliniowa)
+U¿yæ SVN funkcji biliotek, dwa parametry regularyzacyjne, wersja z kernelem
+ (nieliniowa)
 
 Dobraæ rêcznie parametry regularyzaj±ce, grid search
 
