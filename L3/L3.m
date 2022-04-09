@@ -26,10 +26,10 @@ mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1;
 % --- Grid search --- %
 gamma_min = 1;
 gamma_max = 5;
-gamma_count = 6; % ile liczb w gridzie
+gamma_count = 8; % ile liczb w gridzie
 constr_min = 1;
 constr_max = 5;
-constr_count = 6; % ile liczb w gridzie
+constr_count = 8; % ile liczb w gridzie
 
 grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
@@ -100,10 +100,14 @@ pred2 = string(label2);
 predicted = pred1;
 for i=1:length(predicted)
     tmp = [pred1(i), pred2(i)];
-    if ismember("deli", tmp)
+    if (pred1(i) == "deli") && (pred2(i) == "deli")
         predicted(i) = "deli";
-    else
-        predicted(i) = pred2(i);
+    elseif ismember("greenhouse", tmp) && ismember("bathroom", tmp)
+        predicted(i) = pred2(i);  % umyslny blad, nie umiemy ich rozroznic
+    elseif ismember("greenhouse", tmp)
+        predicted(i) = "greenhouse";
+    elseif ismember("bathroom", tmp)
+        predicted(i) = "bathroom";
     end
 end
 

@@ -100,9 +100,9 @@ pred2 = string(label2);
 predicted = pred1;
 for i=1:length(predicted)
     tmp = [pred1(i), pred2(i)];
-    if ismember(deli", tmp)
+    if (pred1(i) == "deli") && (pred2(i) == "deli")
         predicted(i) = "deli";
-    else
+    elseif ismember("greenhouse", tmp) && ismember("greenhouse", tmp)
         predicted(i) = pred1(i);
     end
 end
