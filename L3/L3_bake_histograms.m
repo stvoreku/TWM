@@ -84,7 +84,7 @@ for i=1:length(imtest.Files)
     test_hist(i,:) = wordHist(feats, words);
 end
 
-disp("historgrams ready");
+disp("histograms ready");
 
 
 

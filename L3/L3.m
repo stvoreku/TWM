@@ -28,11 +28,14 @@ gamma_min = 0.01;
 gamma_max = 10;
 gamma_count = 10; % ile liczb w gridzie
 constr_min = 0.1;
-constr_max = 100;
+constr_max = 1000;
 constr_count = 10; % ile liczb w gridzie
 
 grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
+% Opcjonalnie: nieliniowy grid
+% grid_gamma = log(grid_gamma + 1);
+% grid_contraint = log(grid_contraint + 1);
 
 % init
 Gamma = 1;
@@ -78,8 +81,14 @@ for i = 1:gamma_count
     end % constr loop
 end % gamma loop
 
-avg_certainty1_best
-avg_certainty2_best
+% Drukowanie wynikow
+params1 = [avg_certainty1_best, best_gamma1, best_constr1];
+txt1 = sprintf("avg certainty 1: %f \nGamma 1: %f \nConstraint 1: %f", params1);
+disp(txt1);
+
+params2 = [avg_certainty2_best, best_gamma2, best_constr2];
+txt2 = sprintf("avg certainty 2: %f \nGamma 2: %f \nConstraint 2: %f", params2);
+disp(txt2);
 
 % --- Test with new data --- %
 
@@ -102,11 +111,14 @@ cc.Title = "SVM z doborem parametrow poprzez grid search";
 
 % --- Porownanie z automatem --- %
 
+if false
 SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'bathroom','deli'});
+    'Standardize',false,'ClassNames',{'bathroom','deli'}, ...
+    'OptimizeHyperparameters','auto');
 
 SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'greenhouse','deli'});
+    'Standardize',false,'ClassNames',{'greenhouse','deli'}, ...
+    'OptimizeHyperparameters','auto');
 
 [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_testowe);
 [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_testowe);
@@ -115,7 +127,7 @@ original = string(imtest.Labels);
 figure;
 cc = confusionchart(original, predicted);
 cc.Title = "SVM z doborem automatycznym";
-
+end
 
 % -- funkcja laczaca wyniki z dwoch svm-ow --- %
 
