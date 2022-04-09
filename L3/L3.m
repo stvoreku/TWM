@@ -1,14 +1,14 @@
 
-% przed wykonaniem tego skryptu nale¿y najpierw
-% uruchomiæ L3_bake_histograms.m
-% zabieg ten oszczêdza powtarzania tych samych d³ugich obliczen
+% przed wykonaniem tego skryptu naleï¿½y najpierw
+% uruchomiï¿½ L3_bake_histograms.m
+% zabieg ten oszczï¿½dza powtarzania tych samych dï¿½ugich obliczen
 % podczas prototypowania
 dane_testowe = test_hist;
 dane_treningowe = X;
 
 % jak deli to pierwszy wynik negatywny drugi pozytywny
 % jak bathroom/greenhouse to vice versa
-% mo¿na wiêc optymalizowaæ po wartoœci bezwzglêdnej
+% moï¿½na wiï¿½c optymalizowaï¿½ po wartoï¿½ci bezwzglï¿½dnej
 
 % SVM tuning
 % KernelScale = Gamma = Sigma 
@@ -17,7 +17,12 @@ dane_treningowe = X;
 % 0.0001 < Gamma < 10
 % 0.1 < C < 100
 
-% Definicja parametrów startowych pod SVM
+% Przygotowanie "maski" pod punkty
+mask = ones(3*cnt_train, 1)
+mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1
+
+avg_certainty1 = mean(abs(score1(:, 1)*mask))
+% Definicja parametrï¿½w startowych pod SVM
 Gamma = 1;
 C = 1;
 
@@ -46,18 +51,18 @@ for i = 1:gamma_count
         Gamma = grid_gamma(i);
         C = grid_contraint(j);
         SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'bathroom','deli'},... 
+    'Standardize',false,'ClassNames',{'bathroom','deli'},...
     'KernelScale', Gamma, 'BoxConstraint', C);
 
         SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'greenhouse','deli'},... 
+    'Standardize',false,'ClassNames',{'greenhouse','deli'},...
     'KernelScale', Gamma, 'BoxConstraint', C);
 
         % count the scores
         [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_treningowe);
         [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_treningowe);
 
-        % todo poprawiæ i skomentowaæ funkcjê celu
+        % todo poprawiï¿½ i skomentowaï¿½ funkcjï¿½ celu
         avg_certainty1 = mean(abs(score1(:, 1)));
         avg_certainty2 = mean(abs(score2(:, 1)));
 
