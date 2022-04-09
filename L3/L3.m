@@ -15,7 +15,7 @@ dane_treningowe = X;
 
 % Przygotowanie "maski" pod punkty
 mask = ones(3*cnt_train, 1);
-mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1
+mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1;
 % wyniki sa w skali (-1, 1), gdzie -1 oznacza np. "jest deli"
 % a 1 "nie jest deli". Maska zmienia znak wynikow tak,
 % aby wynik poprawny byl ujemny,
@@ -90,4 +90,23 @@ SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
 SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
     'Standardize',false,'ClassNames',{'greenhouse','deli'},...
     'KernelScale', best_gamma2, 'BoxConstraint', best_constr2);
+
+[label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_testowe);
+[label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_testowe);
+
+% porownanie wynikow obu SVM
+pred1 = string(label1);
+pred2 = string(label2);
+predicted = pred1;
+for i=1:length(predicted)
+    tmp = [pred1(i), pred2(i)];
+    if ismember("deli", tmp)
+        predicted(i) = "deli";
+    else
+        predicted(i) = pred2(i);
+    end
+end
+
+original = string(imtest.Labels);
+confusionchart(original, predicted);
 
