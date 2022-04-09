@@ -18,10 +18,10 @@ dane_treningowe = X;
 % 0.1 < C < 100
 
 % Przygotowanie "maski" pod punkty
-mask = ones(3*cnt_train, 1)
-mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1
+mask=ones(3*cnt_train, 1)
+mask(cnt_train:2*cnt_train)=mask(cnt_train:2*cnt_train) * -1
 
-avg_certainty1 = mean(abs(score1(:, 1)*mask))
+%avg_certainty1=mean(abs(score1(:, 1)*mask))
 % Definicja parametr�w startowych pod SVM
 Gamma = 1;
 C = 1;
@@ -63,8 +63,8 @@ for i = 1:gamma_count
         [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_treningowe);
 
         % todo poprawi� i skomentowa� funkcj� celu
-        avg_certainty1 = mean(abs(score1(:, 1)));
-        avg_certainty2 = mean(abs(score2(:, 1)));
+        avg_certainty1 = mean(score1(:, 1).*mask);
+        avg_certainty2 = mean(score2(:, 1).*mask);
 
         % save results if they improved
         if avg_certainty1 > avg_certainty1_max
