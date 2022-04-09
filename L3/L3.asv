@@ -1,13 +1,10 @@
 
-% przed wykonaniem tego skryptu należy najpierw
-% uruchomić L3_bake_histograms.m
-% zabieg ten oszczędza powtarzania tych samych długich obliczen
+% przed wykonaniem tego skryptu nalezy najpierw
+% uruchomic L3_bake_histograms.m
+% zabieg ten oszczedza powtarzania tych samych dlugich obliczen
 % podczas prototypowania
 dane_testowe = test_hist;
-
-% jak deli to pierwszy wynik negatywny drugi pozytywny
-% jak bathroom/greenhouse to vice versa
-% można więc optymalizować po wartości bezwzględnej
+dane_treningowe = X;
 
 % SVM tuning
 % KernelScale = Gamma = Sigma 
@@ -16,9 +13,15 @@ dane_testowe = test_hist;
 % 0.0001 < Gamma < 10
 % 0.1 < C < 100
 
-% Definicja parametrów startowych pod SVM
-Gamma = 1;
-C = 1;
+% Przygotowanie "maski" pod punkty
+mask = ones(3*cnt_train, 1);
+mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1
+% wyniki sa w skali (-1, 1), gdzie -1 oznacza np. "jest deli"
+% a 1 "nie jest deli". Maska zmienia znak wynikow tak,
+% aby wynik poprawny byl ujemny,
+% a false positive dodatni;
+% wtedy srednia wynikow jest dobrym wyznacznikiem "jakosci" SVM
+% ktory mozna minimalizowac w grid search
 
 % --- Grid search --- %
 gamma_min = 1;
@@ -32,8 +35,10 @@ grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
 
 % init
-avg_certainty1_max = 0.0;
-avg_certainty2_max = 0.0;
+Gamma = 1;
+C = 1;
+avg_certainty1_best = 200.0; % arbitrary big numbers
+avg_certainty2_best = 200.0; % arbitrary big numbers
 best_gamma1 = Gamma;
 best_gamma2 = Gamma;
 best_constr1 = C;
@@ -45,33 +50,36 @@ for i = 1:gamma_count
         Gamma = grid_gamma(i);
         C = grid_contraint(j);
         SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'bathroom','deli'},... 
+    'Standardize',false,'ClassNames',{'bathroom','deli'},...
     'KernelScale', Gamma, 'BoxConstraint', C);
 
         SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'greenhouse','deli'},... 
+    'Standardize',false,'ClassNames',{'greenhouse','deli'},...
     'KernelScale', Gamma, 'BoxConstraint', C);
 
-        % count the scores
-        [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_testowe);
-        [label2,score2] = predict(SVMModel_deli_vs_greenhouse, newX);
+        % predict and count the scores
+        [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_treningowe);
+        [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_treningowe);
 
-        avg_certainty1 = mean(abs(score1(:, 1)));
-        avg_certainty2 = mean(abs(score2(:, 1)));
+        avg_certainty1 = mean(score1(:, 1).*mask);
+        avg_certainty2 = mean(score2(:, 1).*mask);
 
         % save results if they improved
-        if avg_certainty1 > avg_certainty1_max
-            avg_certainty1_max = avg_certainty1;
+        if avg_certainty1 < avg_certainty1_best
+            avg_certainty1_best = avg_certainty1;
             best_gamma1 = Gamma;
             best_constr1 = C;
         end
-        if avg_certainty2 > avg_certainty2_max
-            avg_certainty2_max = avg_certainty2;
+        if avg_certainty2 < avg_certainty2_best
+            avg_certainty2_best = avg_certainty2;
             best_gamma2 = Gamma;
             best_constr2 = C;
         end
     end % constr loop
 end % gamma loop
 
-avg_certainty1_max
-avg_certainty2_max
+avg_certainty1_best
+avg_certainty2_best
+
+% --- Test with new data 
+
