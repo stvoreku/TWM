@@ -1,88 +1,16 @@
-% X,Y?
-close all;
 
-% Liczba obrazów treningowych na klasê
-cnt_train = 60;
+% przed wykonaniem tego skryptu nale¿y najpierw
+% uruchomiæ L3_bake_histograms.m
+% zabieg ten oszczêdza powtarzania tych samych d³ugich obliczen
+% podczas prototypowania
+newX = test_hist;
 
-% Liczba obrazów testowych na klasê
-cnt_test = 15;
-
-% Wybrane klasy obiektów
-img_classes = {'deli', 'greenhouse', 'bathroom'};
-
-% Liczba cech wybierana na ka¿dym obrazie
-feats_det = 100;
-
-% Metoda wyboru cech (true - jednorodnie w ca³ym obrazie, false - najsilniejsze)
-feats_uniform = true;
-
-% Wielko¶æ s³ownika
-words_cnt = 30;
-
-
-% imagedatastorage to format daj±cy zdjêcia + labele
-imds_full = imageDatastore("indoor_images/", "IncludeSubfolders", true, "LabelSource", "foldernames");
-countEachLabel(imds_full)
-
-% wykrajamy ma³e imds, jako zestaw do trenowania dla nas
-[imds, imtest] = splitEachLabel(imds_full, cnt_train, cnt_test, 'Include', img_classes);
-countEachLabel(imds)
-
-%przyk³adowe wy¶wietlenie jednego obrazu z zaznaczonymi wykrytymi obiektami
-%po krawêdziach
-
-%mozna odkomentowaæ aby obejrzeæ: 
-
-% I = readImage(imds.Files{43});
-% imshow(I); 
-% hold on;
-% pts = getFeaturePoints(I, feats_det, false);
-% plot(pts);
-
-% Wyznaczanie punktów dla wszystkich obrazów
-files_cnt = length(imds.Files);
-all_points = cell(files_cnt, 1);
-total_features = 0;
-
-for i=1:files_cnt
-    I = readImage(imds.Files{i});
-    all_points{i} = getFeaturePoints(I, feats_det, feats_uniform);
-    total_features = total_features + length(all_points{i});
-end
-
-file_ids = zeros(total_features, 2);
-curr_idx = 1;
-for i=1:files_cnt
-    file_ids(curr_idx:curr_idx+length(all_points{i})-1, 1) = i;
-    file_ids(curr_idx:curr_idx+length(all_points{i})-1, 2) = 1:length(all_points{i});
-    curr_idx = curr_idx + length(all_points{i});
-end
-
-all_features = zeros(total_features, 64, 'single');
-curr_idx = 1;
-for i=1:files_cnt
-    I = readImage(imds.Files{i});
-    curr_features = extractFeatures(rgb2gray(I), all_points{i});
-    all_features(curr_idx:curr_idx+length(all_points{i})-1, :) = curr_features;
-    curr_idx = curr_idx + length(all_points{i});
-end
-
-[idx, words, sumd, D] = kmeans(all_features, words_cnt, "MaxIter", 500);
-
-file_hist = zeros(files_cnt, words_cnt);
-
-for i=1:files_cnt
-    file_hist(i,:) = histcounts(idx(file_ids(:,1) == i), (1:words_cnt+1)-0.5, 'Normalization', 'probability');
-end
-
-X = file_hist;
-Y = imds.Labels;
 
 % Definicja parametrów pod SVM
-Gamma = 1
-C = 1
+Gamma = 1;
+C = 1;
 
-%utworzenie modeli SVM
+% Utworzenie modeli SVM
 SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
     'Standardize',false,'ClassNames',{'bathroom','deli'},... 
     'KernelScale', Gamma, 'BoxConstraint', C);
@@ -91,19 +19,12 @@ SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
     'Standardize',false,'ClassNames',{'greenhouse','deli'},... 
     'KernelScale', Gamma, 'BoxConstraint', C);
 
-%Przygotowanie histogramów danych testwych
-test_hist = zeros(length(imtest.Files), words_cnt);
-for i=1:length(imtest.Files)
-    I = readImage(imtest.Files{i});
-    pts = getFeaturePoints(I, feats_det, feats_uniform);
-    feats = extractFeatures(rgb2gray(I), pts);
-    test_hist(i,:) = wordHist(feats, words);
-end
+[label1,score1] = predict(SVMModel_deli_vs_bathroom, newX)
+[label2,score2] = predict(SVMModel_deli_vs_greenhouse, newX);
 
-newX = test_hist
-
-[label1,score1] = predict(SVMModel_deli_vs_bathroom,newX);
-[label2,score2] = predict(SVMModel_deli_vs_greenhouse,newX);
+% jak deli to pierwszy wynik negatywny drugi pozytywny
+% jak bathroom/greenhouse to vice versa
+% mo¿na wiêc optymalizowaæ po wartoœci bezwzglêdnej
 
 % SVM tuning
 % KernelScale = Gamma = Sigma 
@@ -111,6 +32,21 @@ newX = test_hist
 
 % 0.0001 < Gamma < 10
 % 0.1 < C < 100
+
+avg_certainty1 = mean(abs(score1(:, 1)))
+
+% --- Grid search --- %
+gamma_min = 1;
+gamma_max = 5;
+gamma_count = 6; % ile liczb w gridzie
+constr_min = 1;
+constr_max = 5;
+constr_count = 6; % ile liczb w gridzie
+
+grid_gamma = linspace(gamma_min, gamma_max, gamma_count)
+grid_contraint = linspace(constr_min, constr_max, constr_count)
+
+
 
 
 
