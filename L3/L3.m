@@ -2,10 +2,10 @@
 close all;
 
 % Liczba obrazów treningowych na klasê
-cnt_train = 40;
+cnt_train = 60;
 
 % Liczba obrazów testowych na klasê
-cnt_test = 10;
+cnt_test = 15;
 
 % Wybrane klasy obiektów
 img_classes = {'deli', 'greenhouse', 'bathroom'};
@@ -19,7 +19,6 @@ feats_uniform = true;
 % Wielko¶æ s³ownika
 words_cnt = 30;
 
-img_classes = {'deli', 'greenhouse', 'bathroom'};
 
 % imagedatastorage to format daj±cy zdjêcia + labele
 imds_full = imageDatastore("indoor_images/", "IncludeSubfolders", true, "LabelSource", "foldernames");
@@ -32,11 +31,13 @@ countEachLabel(imds)
 %przyk³adowe wy¶wietlenie jednego obrazu z zaznaczonymi wykrytymi obiektami
 %po krawêdziach
 
-I = readImage(imds.Files{43});
-imshow(I); 
-hold on;
-pts = getFeaturePoints(I, feats_det, false);
-plot(pts);
+%mozna odkomentowaæ aby obejrzeæ: 
+
+% I = readImage(imds.Files{43});
+% imshow(I); 
+% hold on;
+% pts = getFeaturePoints(I, feats_det, false);
+% plot(pts);
 
 % Wyznaczanie punktów dla wszystkich obrazów
 files_cnt = length(imds.Files);
@@ -73,7 +74,43 @@ file_hist = zeros(files_cnt, words_cnt);
 for i=1:files_cnt
     file_hist(i,:) = histcounts(idx(file_ids(:,1) == i), (1:words_cnt+1)-0.5, 'Normalization', 'probability');
 end
-% 
-% SVMModel = fitcsvm(X,Y,'gaussian','rbf',...
-%     'Standardize',true,'ClassNames',{'negClass','posClass'});
+
+X = file_hist;
+Y = imds.Labels;
+
+% Definicja parametrów pod SVM
+Gamma = 1
+C = 1
+
+%utworzenie modeli SVM
+SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'bathroom','deli'},... 
+    'KernelScale', Gamma, 'BoxConstraintValue', C);
+
+SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'greenhouse','deli'},... 
+    'KernelScale', Gamma, 'BoxConstraint', C);
+
+%Przygotowanie histogramów danych testwych
+test_hist = zeros(length(imtest.Files), words_cnt);
+for i=1:length(imtest.Files)
+    I = readImage(imtest.Files{i});
+    pts = getFeaturePoints(I, feats_det, feats_uniform);
+    feats = extractFeatures(rgb2gray(I), pts);
+    test_hist(i,:) = wordHist(feats, words);
+end
+
+newX = test_hist
+
+[label1,score1] = predict(SVMModel_deli_vs_bathroom,newX);
+[label2,score2] = predict(SVMModel_deli_vs_greenhouse,newX);
+
+% SVM tuning
+% KernelScale = Gamma = Sigma 
+% BoxConstraintValue = C = Penalty parameter
+
+% 0.0001 < Gamma < 10
+% 0.1 < C < 100
+
+
 
