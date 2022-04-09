@@ -3,24 +3,8 @@
 % uruchomiæ L3_bake_histograms.m
 % zabieg ten oszczêdza powtarzania tych samych d³ugich obliczen
 % podczas prototypowania
-newX = test_hist;
-
-
-% Definicja parametrów pod SVM
-Gamma = 1;
-C = 1;
-
-% Utworzenie modeli SVM
-SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'bathroom','deli'},... 
-    'KernelScale', Gamma, 'BoxConstraint', C);
-
-SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
-    'Standardize',false,'ClassNames',{'greenhouse','deli'},... 
-    'KernelScale', Gamma, 'BoxConstraint', C);
-
-[label1,score1] = predict(SVMModel_deli_vs_bathroom, newX);
-[label2,score2] = predict(SVMModel_deli_vs_greenhouse, newX);
+dane_testowe = test_hist;
+dane_treningowe = X;
 
 % jak deli to pierwszy wynik negatywny drugi pozytywny
 % jak bathroom/greenhouse to vice versa
@@ -32,6 +16,10 @@ SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
 
 % 0.0001 < Gamma < 10
 % 0.1 < C < 100
+
+% Definicja parametrów startowych pod SVM
+Gamma = 1;
+C = 1;
 
 % --- Grid search --- %
 gamma_min = 1;
@@ -45,8 +33,8 @@ grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
 
 % init
-avg_certainty1_max = mean(abs(score1(:, 1)))
-avg_certainty2_max = mean(abs(score2(:, 1)))
+avg_certainty1_max = 0.0;
+avg_certainty2_max = 0.0;
 best_gamma1 = Gamma;
 best_gamma2 = Gamma;
 best_constr1 = C;
@@ -66,9 +54,10 @@ for i = 1:gamma_count
     'KernelScale', Gamma, 'BoxConstraint', C);
 
         % count the scores
-        [label1,score1] = predict(SVMModel_deli_vs_bathroom, newX);
-        [label2,score2] = predict(SVMModel_deli_vs_greenhouse, newX);
+        [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_treningowe);
+        [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_treningowe);
 
+        % todo poprawiæ i skomentowaæ funkcjê celu
         avg_certainty1 = mean(abs(score1(:, 1)));
         avg_certainty2 = mean(abs(score2(:, 1)));
 
