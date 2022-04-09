@@ -24,12 +24,12 @@ mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1;
 % ktory mozna minimalizowac w grid search
 
 % --- Grid search --- %
-gamma_min = 1;
-gamma_max = 5;
-gamma_count = 8; % ile liczb w gridzie
-constr_min = 1;
-constr_max = 5;
-constr_count = 8; % ile liczb w gridzie
+gamma_min = 0.01;
+gamma_max = 10;
+gamma_count = 10; % ile liczb w gridzie
+constr_min = 0.1;
+constr_max = 100;
+constr_count = 10; % ile liczb w gridzie
 
 grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
@@ -94,23 +94,46 @@ SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
 [label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_testowe);
 [label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_testowe);
 
-% porownanie wynikow obu SVM
+% ocena wynikow
+predicted = merge_results(label1, label2);
+original = string(imtest.Labels);
+cc = confusionchart(original, predicted);
+cc.Title = "SVM z doborem parametrow poprzez grid search";
+
+% --- Porownanie z automatem --- %
+
+SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'bathroom','deli'});
+
+SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'greenhouse','deli'});
+
+[label1,score1] = predict(SVMModel_deli_vs_bathroom, dane_testowe);
+[label2,score2] = predict(SVMModel_deli_vs_greenhouse, dane_testowe);
+predicted = merge_results(label1, label2);
+original = string(imtest.Labels);
+figure;
+cc = confusionchart(original, predicted);
+cc.Title = "SVM z doborem automatycznym";
+
+
+% -- funkcja laczaca wyniki z dwoch svm-ow --- %
+
+function predicted = merge_results(label1, label2)
 pred1 = string(label1);
 pred2 = string(label2);
 predicted = pred1;
-for i=1:length(predicted)
-    tmp = [pred1(i), pred2(i)];
-    if (pred1(i) == "deli") && (pred2(i) == "deli")
-        predicted(i) = "deli";
-    elseif ismember("greenhouse", tmp) && ismember("bathroom", tmp)
-        predicted(i) = pred2(i);  % umyslny blad, nie umiemy ich rozroznic
-    elseif ismember("greenhouse", tmp)
-        predicted(i) = "greenhouse";
-    elseif ismember("bathroom", tmp)
-        predicted(i) = "bathroom";
+    for i=1:length(predicted)
+        tmp = [pred1(i), pred2(i)];
+        if (pred1(i) == "deli") && (pred2(i) == "deli")
+            predicted(i) = "deli";
+        elseif ismember("greenhouse", tmp) && ismember("bathroom", tmp)
+            predicted(i) = pred2(i);  % umyslny blad, nie umiemy ich rozroznic
+        elseif ismember("greenhouse", tmp)
+            predicted(i) = "greenhouse";
+        elseif ismember("bathroom", tmp)
+            predicted(i) = "bathroom";
+        end
     end
 end
-
-original = string(imtest.Labels);
-confusionchart(original, predicted);
 

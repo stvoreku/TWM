@@ -24,12 +24,12 @@ mask(cnt_train:2*cnt_train) = mask(cnt_train:2*cnt_train) * -1;
 % ktory mozna minimalizowac w grid search
 
 % --- Grid search --- %
-gamma_min = 1;
-gamma_max = 5;
-gamma_count = 6; % ile liczb w gridzie
-constr_min = 1;
-constr_max = 5;
-constr_count = 6; % ile liczb w gridzie
+gamma_min = 0.01;
+gamma_max = 10;
+gamma_count = 10; % ile liczb w gridzie
+constr_min = 0.1;
+constr_max = 100;
+constr_count = 10; % ile liczb w gridzie
 
 grid_gamma = linspace(gamma_min, gamma_max, gamma_count);
 grid_contraint = linspace(constr_min, constr_max, constr_count);
@@ -102,11 +102,25 @@ for i=1:length(predicted)
     tmp = [pred1(i), pred2(i)];
     if (pred1(i) == "deli") && (pred2(i) == "deli")
         predicted(i) = "deli";
-    elseif ismember("greenhouse", tmp) && ismember("greenhouse", tmp)
-        predicted(i) = pred1(i);
+    elseif ismember("greenhouse", tmp) && ismember("bathroom", tmp)
+        predicted(i) = pred2(i);  % umyslny blad, nie umiemy ich rozroznic
+    elseif ismember("greenhouse", tmp)
+        predicted(i) = "greenhouse";
+    elseif ismember("bathroom", tmp)
+        predicted(i) = "bathroom";
     end
 end
 
 original = string(imtest.Labels);
-confusionchart(original, predicted);
+cc = confusionchart(original, predicted);
+cc.Title = "SVM z doborem parametrow poprzez grid search";
 
+%
+
+SVMModel_deli_vs_bathroom = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'bathroom','deli'},...
+    'KernelScale', best_gamma1, 'BoxConstraint', best_constr1);
+
+SVMModel_deli_vs_greenhouse = fitcsvm(X,Y,'KernelFunction','gaussian',...
+    'Standardize',false,'ClassNames',{'greenhouse','deli'},...
+    'KernelScale', best_gamma2, 'BoxConstraint', best_constr2);
