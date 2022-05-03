@@ -1,0 +1,45 @@
+Przy kompilacji modulu
+
+jaka funkcja faktycznie jest kompilowana?
+
+categorical_crossentropy -> iloczyn skalarny wyjść i to minimalizujemy
+
+metrics (accuracy) -> czy idziemy w dobrą strone. Accuracy jest dobre dla zbalansowanych zbiorow
+
+W momencie kiedy sieć zbyt dopasowuje się do danych treningowych, ale walidacyjne zaczynaja odpadać, to przeuczamy sieć!
+
+Splot -> rodzaj filtra, macierzy np 5x5 przesuwanej po orginalnej
+
+Filtry uczą się rozpoznawać poszczególne fragmenty
+
+"TRansfer wiedzy"
+
+uczenie całej bazy ma sens przy niewielkiej ilości
+
+image net, tysiąc klas, miliony obrazów
+
+uczenie od zera -> kilka tygodni uczenia.
+
+Możemy wziąc sieć z danego problemu i dotrenować ją.
+
+Aby nie zepsuć istniejących sieć możemy "zamrozić" rzeczy z głębi np warstwy wyciągajace cechy
+
+Fine tuning (?)
+
+Na etapie poprawnego klasyfikowania możemy odmrozić nasze warstwy i dotrenować nasz model
+
+ImageNet -> 2016 (?)
+
+Mist letters -> 32znaki + 10cyfr
+
+
+MNIST obrazy RBG -> 28x28 obrazy
+
+Utworzyć sieć splotową CNN, która będzie jakoś tam dobrze radzić.
+Część klasyfikacyjna, różne warstwy, dropout(>)?
+
+CIFER10?
+
+Fragment działający + Zrzut z ekranu test, skuteczność, macierz pomyłek na zbiorze testowym
+
+75% -> Dolny limit
