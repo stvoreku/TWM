@@ -1,0 +1,56 @@
+FCN:
+
+Ruchome okno poruszające się po obrazie aby wykryć wiele obiektów na jednym obrazie źródłowym
+Hiperparametry: Odstęp, skalowanie obrazu
+
+Mamy większy obraz 28x28 i liczymy z niego splot.
+
+Pooling jest w 2x2, niepatrzysta liczba na wejściu może zgubić wiersz
+
+Wykorzystanie wag wytrenowanej sieci "klasycznej":
+
+Można wykorzystać wagi z sieci klasycznej wycinając intereujące na elementy
+
+to_fully_conv
+
+5.2 -> Wyłącznie dla dobrej tekstury i dobrego pokrycia
+
+HOG:
+
+np sylwetki ludzkie słabe ze względu na zróżnicowanie -> HOG ma sens
+
+Histogram oriented gradients
+
+W okienkach liczymy gradient, kierunek zmiany jasności
+
+Jak dla obiektów różnych rozmiarów
+
+Histogram od zera do 360 to za dużo, robimy mniejsze, 0-180 co 20 stopni na przykład.
+
+Jak wykryć?
+
+HOG na całej scenie, poruszamy się oknem przesuwnym
+
+Zadanie: Stworzenie klasyfikatora. Odległośc euklidesowa fragmenta okna ze sceny do obydwu modeli,
+ odleglóść poniżej jakiegoś progu -> detekcja. Obraz skalowany 5 razy do coraz mniejszego rozmiaru
+
+ Oznaczyć image labeler, porównać nasze detekcje z gTruth
+ precyzja poprawne detekcje do wszystki
+ recall -> ile mamy poprawnych detekcji z tych których się spodziewamy
+
+ Doprowadzić klasyfikator (% klasyfikator) do poprawnego działania
+ Zachować HOG
+ Rozbudować zbiór trenujący
+ dodać klasę negatywną
+ klasyfikator lepszy niż najbliższe sąsiedztwo odległości euklidesowej
+
+ SVM -> Policzyć Hogi dla pozytywnych, negatywnych, wyćwiczyć klasyfikator pozytywny negatywny
+
+ Nie naprawiać sytemu poprzez wycięcie wszystkich sylwetek
+ znaleźć sylwetki których nie ma w zbiorach?
+
+ Rozszerzyć dane treningowe o inne sylwetki, dodać negatywne
+
+ znaleźć jakiś person dataset, dobre źródło sylwetek
+
+ INRIA person dataset
