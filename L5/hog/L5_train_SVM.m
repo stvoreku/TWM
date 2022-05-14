@@ -14,7 +14,7 @@ trainingSet = imds_full;
 % Test rozmiaru komórki - potrzebny do obliczeń!
 % Rozmiar komórki wybieramy dynamicznie, żeby potem
 % rozmiar HOGów był stały
-num_cells_x = 6;
+num_cells_x = 8;
 num_cells_y = 8;
 img = imread("imgs/pos/person_2.png");
 [y,x] = getCellSize(img, num_cells_y, num_cells_x);

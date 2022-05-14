@@ -13,7 +13,7 @@ sy = 128;
 step = 8;
 
 scale_step = 0.8;
-levels = 5;  % k z jakiegoś powodu nie jest używane w głównej pętli
+levels = 5;
 
 scale = 1.0;
 thr = 60;  % to chyba jest do przycinania maksymalnych score
@@ -133,7 +133,7 @@ figure;
 imshow(ann1);
 
 % Finalna detekcja w oparciu o próg
-score_thr = 0.4;
+score_thr = 0.2;
 selected_dets = filtered_dets(filtered_scores < score_thr, :);
 ratio = bboxOverlapRatio(gt_rect, selected_dets)
 
