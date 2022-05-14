@@ -61,7 +61,6 @@ for i=1:numImages
     [height, width, colour_planes] = size(img);
     y = floor(height/num_cells_y);
     x = floor(width/num_cells_x);
-    curr_cellSize = cellSize;
     cellSize = [y x];
 
 %     imshow(img);
