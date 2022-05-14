@@ -36,10 +36,9 @@ for k=1:levels
 
     % Dobieramy rozmiar komórki jak wcześniej
     % (chyba) może być stała per k bo (chyba) używamy okna o stałym rozmiarze
-    % TODO dobrać height i width z powyższych zmiennych
-%     cell_y = floor(height/num_cells_y);
-%     cell_x = floor(width/num_cells_x);
-%     cellSize = [cell_y cell_y];
+    cell_y = floor(sy/num_cells_y);
+    cell_x = floor(sx/num_cells_x);
+    cellSize = [cell_y cell_y];
     
     for j=0:count_y-1
         for i=0:count_x-1
@@ -47,7 +46,12 @@ for k=1:levels
             y = 1+(j*step);
             sub_img = cur_img(y:y+sy, x:x+sx);
 
-            sub_hog = extractHOGFeatures(img,'CellSize',cellSize);
+            [sub_hog, vis] = extractHOGFeatures(sub_img,'CellSize',cellSize);
+
+            figure;
+            imshow(sub_img);
+            hold on;
+            plot(vis);
 
             % Stary klasyfikator
             %dist = min(sum((sub_hog - hog1) .^ 2 ), sum((sub_hog - hog2) .^ 2 ));
