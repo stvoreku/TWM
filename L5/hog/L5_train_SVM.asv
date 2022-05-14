@@ -1,5 +1,5 @@
 % HOGi "uczące"
-training_count = 8;  % liczba treningowych zdjec osob
+training_count = 14;  % liczba treningowych zdjec osob
 
 imds_full = imageDatastore("imgs/", "IncludeSubfolders", true, "LabelSource", "foldernames");
 countEachLabel(imds_full)
@@ -46,10 +46,10 @@ for i=1:numImages
     [tmp_hog, vis] = extractHOGFeatures(img,'CellSize',cellSize);
     trainingFeatures(i, :) = tmp_hog;
 end
-
 trainingLabels = trainingSet.Labels;
 % svm_classifier = fitcecoc(trainingFeatures, trainingLabels);  % multiclass
 svm_classifier = fitcsvm(trainingFeatures, trainingLabels);  % binary class
+fitcsvm
 
 % Test
 numImages = numel(testSet.Files);
@@ -72,6 +72,6 @@ for i=1:numImages
     testFeatures(i, :) = tmp_hog;
 end
 
-[predictedLabels, scores] = predict(svm_classifier, testFeatures);
+predictedLabels = predict(svm_classifier, testFeatures);
 figure;
 confusionchart(testSet.Labels, predictedLabels);
