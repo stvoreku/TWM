@@ -13,7 +13,7 @@ sy = 128;
 step = 8;
 
 scale_step = 0.8;
-levels = 5;
+levels = 1;  % k z jakiegoś powodu nie jest używane w głównej pętli
 
 scale = 1.0;
 thr = 60;
@@ -38,7 +38,7 @@ for k=1:levels
     % (chyba) może być stała per k bo (chyba) używamy okna o stałym rozmiarze
     cell_y = floor(sy/num_cells_y);
     cell_x = floor(sx/num_cells_x);
-    cellSize = [cell_y cell_y];
+    cellSize = [cell_y cell_x];
     
     for j=0:count_y-1
         for i=0:count_x-1
@@ -48,10 +48,10 @@ for k=1:levels
 
             [sub_hog, vis] = extractHOGFeatures(sub_img,'CellSize',cellSize);
 
-            figure;
-            imshow(sub_img);
-            hold on;
-            plot(vis);
+%             figure;
+%             imshow(sub_img);
+%             hold on;
+%             plot(vis);
 
             % Stary klasyfikator
             %dist = min(sum((sub_hog - hog1) .^ 2 ), sum((sub_hog - hog2) .^ 2 ));
@@ -126,6 +126,7 @@ imshow(insertObjectAnnotation(It, "rectangle", filtered_dets, filtered_lbls));
 
 % Tu się dzieją jakieś czary bo na bazie tych dziwnych danych gTruth.mat
 % wybierane są prostokąty z ludźmi
+load('gTruth.mat');
 gt_rect=gTruth.LabelData.person{1,1};
 ann1 = insertObjectAnnotation(It, "rectangle", gt_rect, "person");
 figure;

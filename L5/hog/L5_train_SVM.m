@@ -1,5 +1,5 @@
 % HOGi "uczące"
-training_count = 8;  % liczba treningowych zdjec osob
+training_count = 18;  % liczba treningowych zdjec osob
 
 imds_full = imageDatastore("imgs/", "IncludeSubfolders", true, "LabelSource", "foldernames");
 countEachLabel(imds_full)
@@ -48,8 +48,10 @@ for i=1:numImages
 end
 
 trainingLabels = trainingSet.Labels;
-% svm_classifier = fitcecoc(trainingFeatures, trainingLabels);  % multiclass
-svm_classifier = fitcsvm(trainingFeatures, trainingLabels);  % binary class
+% multiclass:
+% svm_classifier = fitcecoc(trainingFeatures, trainingLabels);
+% binary class:
+svm_classifier = fitcsvm(trainingFeatures, trainingLabels);
 
 % Test
 numImages = numel(testSet.Files);
