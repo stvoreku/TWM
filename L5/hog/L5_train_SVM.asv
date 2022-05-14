@@ -14,10 +14,12 @@ trainingSet = imds_full;
 % Test rozmiaru komórki - potrzebny do obliczeń!
 % Rozmiar komórki wybieramy dynamicznie, żeby potem
 % rozmiar HOGów był stały
-num_cells_x = 6;
-num_cells_y = 8;
+num_cells_x = 12;
+num_cells_y = 16;
 img = imread("imgs/pos/person_2.png");
-[y,x] = getCellSize(img, num_cells_y, num_cells_x);
+[height, width, colour_planes] = size(img);
+y = floor(height/num_cells_y);
+x = floor(width/num_cells_x);
 cellSize = [y x];
 [hog_test, vis] = extractHOGFeatures(img,'CellSize',cellSize);
 hogFeatureSize = length(hog_test);
@@ -33,18 +35,17 @@ trainingFeatures = zeros(numImages,hogFeatureSize,'single');
 
 for i=1:numImages
     img = readimage(trainingSet,i);
-
-    [y,x] = getCellSize(img, num_cells_y, num_cells_x);
+    % Dobieramy rozmiar komórki jak wcześniej
+    [height, width, colour_planes] = size(img);
+    y = floor(height/num_cells_y);
+    x = floor(width/num_cells_x);
+    curr_cellSize = cellSize;
     cellSize = [y x];
 
 %     imshow(img);
 %     hold on;
 %     plot(vis);
     [tmp_hog, vis] = extractHOGFeatures(img,'CellSize',cellSize);
-    close all;
-    imshow(img);
-    hold on;
-    plot(vis);
     trainingFeatures(i, :) = tmp_hog;
 end
 
@@ -61,8 +62,10 @@ testFeatures = zeros(numImages,hogFeatureSize,'single');
 
 for i=1:numImages
     img = readimage(testSet,i);
-
-    [y,x] = getCellSize(img, num_cells_y, num_cells_x);
+    % Dobieramy rozmiar komórki jak wcześniej
+    [height, width, colour_planes] = size(img);
+    y = floor(height/num_cells_y);
+    x = floor(width/num_cells_x);
     cellSize = [y x];
 
 %     imshow(img);

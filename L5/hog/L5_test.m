@@ -13,10 +13,10 @@ sy = 128;
 step = 8;
 
 scale_step = 0.8;
-levels = 1;  % k z jakiegoś powodu nie jest używane w głównej pętli
+levels = 5;  % k z jakiegoś powodu nie jest używane w głównej pętli
 
 scale = 1.0;
-thr = 60;
+thr = 60;  % to chyba jest do przycinania maksymalnych score
 
 dets = [];
 scores = [];
@@ -59,8 +59,8 @@ for k=1:levels
 
             % Nowy klasyfikator
             [label, score] = predict(svm_classifier, sub_hog);
-            out(j+1, i+1) = score(1)*(-1);  % wartości muszą być dodatnie bo potem jest minimalizacja
-
+            out(j+1, i+1) = score(1);  % pewność że próbka NIE jest człowiekiem
+            % bo to można minimalizować
         end
     end
     
@@ -133,7 +133,7 @@ figure;
 imshow(ann1);
 
 % Finalna detekcja w oparciu o próg
-score_thr = 40;
+score_thr = 0.4;
 selected_dets = filtered_dets(filtered_scores < score_thr, :);
 ratio = bboxOverlapRatio(gt_rect, selected_dets)
 
@@ -142,7 +142,7 @@ ratio = bboxOverlapRatio(gt_rect, selected_dets)
 iou = 0.4;
 best_ids = good_ids(best_overlaps > iou)
 
-% Wyświetlanie false pos i "false negative"
+% Wyświetlanie false pos i true pos
 pos_neg = zeros(size(selected_dets, 1), 1);
 pos_neg(best_ids) = 1;
 tp_boxes = selected_dets(pos_neg==1, :);
