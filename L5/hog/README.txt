@@ -5,7 +5,7 @@
 2. Uruchomić L5_test.m
 
 W skrypcie testowym można zmieniać parametry bez potrzeby ponownego trenowania SVM.
-Na początku skryptu można wybrać przykład 1 i 2.
+Na początku skryptu można wybrać przykład wpisując odpowiednią liczbę 1-5 (jedynie przykład 4 z jakiejś przyczyny nie działa).
 
 # Obserwacje wstępne
 Kod faworyzuje wybór małych detekcji, więc jeżeli zaczynamy od małych okien to "zjadają" one duże detekcje, co objawia się tym że zamiast zaznaczenia całej osoby mamy w jej miejscu np. 3 małe prostokąty.
