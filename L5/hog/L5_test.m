@@ -1,6 +1,6 @@
 
 % Obrazek testowy i jego HOG
-test_num = "2";
+test_num = "3";
 load("gTruth_"+test_num+".mat");
 It = imread("people_"+ test_num +".jpg");
 [hogt,vist] = extractHOGFeatures(img);
@@ -19,7 +19,7 @@ step = 8;
 % co objawia się tym że zamiast zaznaczenia całej osoby
 % mamy w jej miejscu 3 małe prostokąty
 % w praktyce scale > 1.0 psuje większe detekcje
-scale = 0.8;  % 1.3 wydaje się najlepsze do łapania najmniejszej osoby
+scale = 0.8;
 scale_step = 0.7;
 levels = 5;  % w każdym kolejnym kroku oglądamy coraz mniejszy obraz
 % a więc szukamy coraz większych ludzi
