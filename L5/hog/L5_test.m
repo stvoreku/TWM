@@ -12,10 +12,11 @@ sx = 48;
 sy = 128;
 step = 8;
 
-scale_step = 0.8;
-levels = 5;
+scale = 0.8;  % 1.3 wydaje się najlepsze do łapania najmniejszej osobvy, ale wszystko >1.0 psuje większe detekcje
+scale_step = 0.7;
+levels = 5;  % w każdym kolejnym kroku oglądamy coraz mniejszy obraz
+% a więc szukamy coraz większych ludzi
 
-scale = 1.0;
 thr = 60;  % to chyba jest do przycinania maksymalnych score
 
 dets = [];
