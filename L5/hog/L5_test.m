@@ -1,6 +1,6 @@
 
 % Obrazek testowy i jego HOG
-test_num = "1";
+test_num = "2";
 load("gTruth_"+test_num+".mat");
 It = imread("people_"+ test_num +".jpg");
 [hogt,vist] = extractHOGFeatures(img);
