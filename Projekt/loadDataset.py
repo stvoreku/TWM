@@ -14,8 +14,8 @@ from keras.utils import np_utils  # NumPy related tools
 from keras import optimizers
 
 # ----------------- Config ----------------- #
-img_height = 256
-img_width = 256
+img_height = 128
+img_width = 128
 internal_img_size = (img_height, img_width)
 
 
@@ -68,7 +68,7 @@ model = Sequential([
   layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
   layers.Flatten(),
-  layers.Dense(128, activation='relu'),
+  # layers.Dense(128, activation='relu'),
   layers.Dense(num_classes)
 ])
 
