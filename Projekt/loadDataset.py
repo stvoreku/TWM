@@ -21,7 +21,7 @@ def load_dataset(subset="training"):
         "GTSRB/Training/",
         labels="inferred",  # labels are generated from the directory structure
         label_mode="int",
-        color_mode="grayscale",
+        color_mode="rgb",
         batch_size=32,
         image_size=internal_img_size,  # skalowanie obrazu, niestety jest chyba obowiązkowe
         interpolation="bilinear",
@@ -55,10 +55,6 @@ plt.show()
 
 # Przykładowa sieć z artykułu
 num_classes = len(class_names)
-
-# TODO dopasowanie kształtu. Na razie jest error:
-# Input 0 of layer "conv2d" is incompatible with the layer: expected axis -1 of input shape to have value 3,
-# but received input with shape (None, 256, 256, 1)
 
 model = Sequential([
   layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
