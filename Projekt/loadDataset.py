@@ -1,3 +1,6 @@
+# Kod pobierający repo w Google Colab:
+# !git clone https://github.com/stvoreku/TWM.git
+
 import numpy as np                   # advanced math library
 import matplotlib.pyplot as plt      # MATLAB like plotting routines
 import random                        # for generating random numbers
