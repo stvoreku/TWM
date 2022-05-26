@@ -13,6 +13,7 @@ from keras import layers
 from keras.utils import np_utils  # NumPy related tools
 from keras import optimizers
 
+# TODO trzeba dodać klasę negatywną oraz dane do niej, potem przetrenować model i zapisać od nowa
 # ----------------- Config ----------------- #
 img_height = 128
 img_width = 128

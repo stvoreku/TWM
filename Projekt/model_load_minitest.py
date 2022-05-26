@@ -2,8 +2,8 @@ from tensorflow import keras
 from tensorflow import nn
 from tensorflow import expand_dims
 import numpy as np
+import matplotlib.pyplot as plt
 
-model = keras.models.load_model('cnn_model')
 
 class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed70', '05_speed80', '06_endSpeed80',
                '07_speed100', '08_speed120', '09_noPassSmall', '10_noPassBig', '11_prioritySingleIntersection',
@@ -18,17 +18,31 @@ class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed
 
 img_height = 128  # must be same as in model
 img_width = 128
-imfilepath = 'GTSRB/Training/04_speed70/00000_00007.ppm.png'
+model = keras.models.load_model('cnn_model')
+imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
 
-img = keras.utils.load_img(imfilepath, target_size=(img_height, img_width))
-img_array = keras.utils.img_to_array(img)
-img_array = expand_dims(img_array, 0)  # Zamiana w tensor, inaczej kształt się nie zgadza
+images = []
+predictions = []
+confidences = []
 
-predictions = model.predict(img_array)
-score = nn.softmax(predictions[0])
+plt.figure(figsize=(10, 10))
 
-print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence."
-    .format(class_names[np.argmax(score)], 100 * np.max(score))
-)
+# Te predykcje na pewno można zrobić jakoś grupowo - w przyszłości lepiej nie robić pojedynczo
 
+for i in range(9):
+    fp = imfilepath.format(i)
+    img = keras.utils.load_img(fp, target_size=(img_height, img_width))
+    img_array = keras.utils.img_to_array(img)
+    img_array = expand_dims(img_array, 0)  # Zamiana w tensor, inaczej kształt się nie zgadza
+
+    predictions = model.predict(img_array)
+    score = nn.softmax(predictions[0])
+    predcted_class = class_names[np.argmax(score)]
+    answer_string = "{}\nw/ {:.2f}% confidence".format(predcted_class, 100 * np.max(score))
+
+    ax = plt.subplot(3, 3, i + 1)
+    plt.imshow(img)
+    plt.title(answer_string)
+    plt.axis("off")
+
+plt.show()
