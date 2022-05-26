@@ -118,3 +118,5 @@ plt.show()
 # from google.colab import files
 # files.download('cnn_model.zip')
 
+# Save class_names
+
