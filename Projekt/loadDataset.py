@@ -109,3 +109,12 @@ plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
 plt.show()
 
+
+# Zapisywanie modelu
+# model.save('cnn_model')
+
+# W Google Colab:
+# !zip -r cnn_model.zip cnn_model
+# from google.colab import files
+# files.download('cnn_model.zip')
+
