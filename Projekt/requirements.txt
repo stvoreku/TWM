@@ -2,3 +2,5 @@ tensorflow~=2.9.1
 numpy~=1.22.1
 matplotlib~=3.5.2
 keras~=2.9.0
+imutils
+opencv-python
