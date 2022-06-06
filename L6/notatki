@@ -1,0 +1,26 @@
+Stereo camera calibrator
+
+Dodać odpowiednie obrazki
+
+Ocenić czy linie epipolarne odpowiadają tym samym punktom
+
+Im obiekt bliżej tym większe disparity i odwrotnie, szczególnie dla układu z równoległymi osiami.
+
+Nasze zadanie
+
+Powtórzyć proces z innym zbiorem danych
+
+Szachownica 40mm
+
+Dla naszego datasetu disparoty dużo dużo wyżej, pewnie Over 200
+
+Jeśli myli odległość to dalej disparoty złe
+
+3 rzecz która mamy zrobic
+
+Zapełniać dziury
+
+Dziury w disparoty map -> ujemne wartości, możemy wypełnić jakimś oknem
+
+
+W ramach odpowiedzi zmodyfikowany notatnik
