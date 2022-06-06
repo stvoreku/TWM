@@ -9,7 +9,7 @@ image = cv2.imread("00033.png")
 (winW, winH) = (128, 128)
 
 # loop over the image pyramid
-for resized in pyramid(image, scale=1.5):
+for resized in pyramid(image, scale_division_step=1.5):
     # loop over the sliding window for each layer of the pyramid
     for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
         # if the window does not meet our desired window size, ignore it
