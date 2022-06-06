@@ -20,11 +20,18 @@ class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed
 
 
 class PredictedWindow:
-    def __init__(self, predictions, x, y):
+    """
+    Holds detection and window data.
+    predictions - from Keras
+    x,y - image origin (position)
+    relative_scale - compared to original image
+    """
+    def __init__(self, predictions, x, y, relative_scale):
         self.x = x
         self.y = y
+        self.w = int(img_width*relative_scale)
+        self.h = int(img_height*relative_scale)
         self.predictions = predictions
         self.score = nn.softmax(self.predictions[0])
         self.percent_score = 100 * np.max(self.score)
         self.predicted_class = class_names[np.argmax(self.score)]
-
