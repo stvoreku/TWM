@@ -23,8 +23,8 @@ for i in range(9):
 
     predictions = model.predict(img_array)
     score = nn.softmax(predictions[0])
-    predcted_class = class_names[np.argmax(score)]
-    answer_string = "{}\nw/ {:.2f}% confidence".format(predcted_class, 100 * np.max(score))
+    predicted_class = class_names[np.argmax(score)]
+    answer_string = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
 
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(img)

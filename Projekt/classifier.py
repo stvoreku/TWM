@@ -1,4 +1,6 @@
 from tensorflow import keras
+from tensorflow import nn
+import numpy as np
 
 img_height = 128  # must be same as in model
 img_width = 128
@@ -15,3 +17,14 @@ class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed
                '35_mustDriveForward', '36_mustForwardOrRight', '37_mustForwardOrLeft', '38_mustPassObstacleRight',
                '39_mustPassObstacleLeft', '40_roundabout', '41_endNoPassSmall', '42_endNoPassBig'
                ]
+
+
+class PredictedWindow:
+    def __init__(self, predictions, x, y):
+        self.x = x
+        self.y = y
+        self.predictions = predictions
+        self.score = nn.softmax(self.predictions[0])
+        self.percent_score = 100 * np.max(self.score)
+        self.predicted_class = class_names[np.argmax(self.score)]
+
