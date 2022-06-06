@@ -20,7 +20,6 @@ font_thickness = 1
 
 window_predictions = []
 
-# TODO na razie to jest napisane trochę pod tylko jeden rozmiar okna
 # loop over the image pyramid
 for resized in pyramid(image, scale_division_step=1.5, steps=1):
     # loop over the sliding window for each layer of the pyramid
@@ -40,24 +39,25 @@ for resized in pyramid(image, scale_division_step=1.5, steps=1):
         win_pred = classifier.PredictedWindow(predictions, x, y)
         window_predictions.append(win_pred)
 
-    # Draw predictions
-    cv2.imshow("Window", clone)
 
-    for window in window_predictions:
+# Draw predictions
+for window in window_predictions:
 
-        if window.percent_score > 95:
-            x = window.x
-            y = window.y
+    if window.percent_score > 95:
+        x = window.x
+        y = window.y
 
-            # text = "{}\nw/ {:.2f}% confidence".format(predcted_class, 100 * np.max(score))
-            text = "{:.2f}%".format(window.percent_score)
-            text2 = window.predicted_class
-            text1_pos = (x+rect_thickness, y+rect_thickness+8)
-            text2_pos = (x+rect_thickness, y+classifier.img_height-rect_thickness)
+        # text = "{}\nw/ {:.2f}% confidence".format(predcted_class, 100 * np.max(score))
+        text = "{:.2f}%".format(window.percent_score)
+        text2 = window.predicted_class
+        text1_pos = (x+rect_thickness, y+rect_thickness+8)
+        text2_pos = (x+rect_thickness, y+classifier.img_height-rect_thickness)
 
-            cv2.rectangle(clone, (x, y), (x + winW, y + winH), rect_color, rect_thickness)
-            cv2.putText(clone, text, text1_pos, font, font_scale, font_color, font_thickness)
-            cv2.putText(clone, text2, text2_pos, font, font_scale, font_color, font_thickness)
+        cv2.rectangle(image, (x, y), (x + winW, y + winH), rect_color, rect_thickness)
+        cv2.putText(image, text, text1_pos, font, font_scale, font_color, font_thickness)
+        cv2.putText(image, text2, text2_pos, font, font_scale, font_color, font_thickness)
+
+cv2.imshow("Window", image)
 
 # Keep the final image, press Escape to exit
 key = cv2.waitKey(0)
