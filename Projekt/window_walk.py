@@ -52,7 +52,7 @@ print("Drawing results...")
 # Draw predictions
 for window in window_predictions:
 
-    if window.percent_score > 90 and window.predicted_class != '43_nothing':
+    if window.percent_score > 95 and window.predicted_class != '43_nothing':
         x = window.x
         y = window.y
         w = window.w
