@@ -16,7 +16,7 @@ rect_color = (0, 255, 0)
 rect_thickness = 2
 font = cv2.FONT_HERSHEY_SIMPLEX
 font_scale = 0.3
-font_color = (0, 0, 0)
+font_color = (255, 0, 0)
 font_thickness = 1
 
 window_predictions = []
@@ -25,11 +25,11 @@ scale = 1.0  # init
 
 # Loop over the image pyramid
 print("Processing image...")
-for resized in pyramid(image, scale_division_step=scale_step, steps=2):
+for resized in pyramid(image, scale_division_step=scale_step, steps=3):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
 
-    for (x, y, window) in sliding_window(resized, stepSize=64, windowSize=(winW, winH)):
+    for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
         # If the window does not meet our desired window size, ignore it
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
@@ -52,7 +52,7 @@ print("Drawing results...")
 # Draw predictions
 for window in window_predictions:
 
-    if window.percent_score > 95:
+    if window.percent_score > 90 and window.predicted_class != '43_nothing':
         x = window.x
         y = window.y
         w = window.w
