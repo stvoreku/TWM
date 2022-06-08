@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 from classifier import *
 
-imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
-
+#imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
+imfilepath = 'CustomImages/Test/{:02d}.png'
 images = []
 predictions = []
 confidences = []
@@ -15,8 +15,8 @@ plt.figure(figsize=(10, 10))
 
 # Te predykcje na pewno można zrobić jakoś grupowo - w przyszłości lepiej nie robić pojedynczo
 
-for i in range(9):
-    fp = imfilepath.format(i)
+for i,a in enumerate(range(4,13)):
+    fp = imfilepath.format(a)
     img = keras.utils.load_img(fp, target_size=(img_height, img_width))
     img_array = keras.utils.img_to_array(img)
     img_array = expand_dims(img_array, 0)  # Zamiana w tensor, inaczej kształt się nie zgadza

@@ -7,7 +7,7 @@ img_height = 128  # must be same as in model
 img_width = 128
 model = keras.models.load_model('cnn_model')
 
-
+print("running")
 class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed70', '05_speed80', '06_endSpeed80',
                '07_speed100', '08_speed120', '09_noPassSmall', '10_noPassBig', '11_prioritySingleIntersection',
                '12_priorityFull', '13_yield', '14_stop', '15_noEntryAll', '16_noEntryLarge', '17_noEntryOneWay',

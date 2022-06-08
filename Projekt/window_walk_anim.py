@@ -24,5 +24,5 @@ for resized in pyramid(image, scale_division_step=1.5):
         cv2.rectangle(clone, (x, y), (x + winW, y + winH), (0, 255, 0), 2)
         cv2.imshow("Window", clone)
         cv2.waitKey(1)
-        time.sleep(0.025)
+        time.sleep(0.005)
 

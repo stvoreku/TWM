@@ -1,0 +1,42 @@
+sekwencja obrazu -> usuwanie tła -> dedekcja ruchu
+
+ruch można wykryć jako różnica ramek (duh). Orginalna ramka to może być poprzednia, pierwsza, okno.
+
+uczenie modelu tła (matlab)
+- ciągłe
+- adaptacyjne: nowe ramki z niższą wagą, duży sens do "doraźnego" zastosowania
+
+- matlabowy detector wystarczy feedować kolejnymi obrazami, zwraca maskę
+
+#zamkniecie morfologiczne, imclose(fdmasj, strel)
+
+potok optyczny:
+
+potok optyczny; rzadki i gęsty. Wyjściowo chcemy informacje jak zmienił się dany punkt obrazu. Faktyczne śledzenie.
+
+Wektor przesunięcia danego obiektu.
+
+2 pictures to track?
+
+estimate flow, tak samo jak estymacja tła,podajemy poprzednią i nową ramkę,
+
+potok optyczny + wektory: Lepsze śledzenie kierunku poruszania się.
+
+Zaczynając z punktu potok optyczny, centroidy, szybkości etc.
+
+Dorobić zostawianie śladów na ramce.
+
+Nowa pozycja -> podobna prędkość? Nowe -> Zapamiętywać jako nowe.
+
+metoda węgierska, algorytm węgierski
+
+Obiekty można śledzić na dwa sposoby:
+
+wykrywamy jakiś obiekt, staramy się przypisać jakieś obiekty, cechy charakterystyczne
+
+"Prawdziwe śledzenie", szukamy nowej okolicy naszego obiektu, "lokalne wyszukiwanie".
+
+minshift -> śledzenie po histogramach.
+
+Do 15.06 Lab.
+
