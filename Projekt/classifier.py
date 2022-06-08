@@ -1,6 +1,7 @@
 from tensorflow import keras
 from tensorflow import nn
 import numpy as np
+from shapely.geometry import Polygon
 
 img_height = 128  # must be same as in model
 img_width = 128
@@ -31,7 +32,30 @@ class PredictedWindow:
         self.y = y
         self.w = int(img_width*relative_scale)
         self.h = int(img_height*relative_scale)
-        self.predictions = predictions
-        self.score = nn.softmax(self.predictions[0])
+        # self.predictions = predictions  # not needed rn, so save space
+        self.score = nn.softmax(predictions[0])
         self.percent_score = 100 * np.max(self.score)
         self.predicted_class = class_names[np.argmax(self.score)]
+
+        # Calc rectangle for overlap calculation
+        x2 = self.x + self.w
+        y2 = self.y + self.h
+        self.rectangle = Polygon([
+            (x, y),
+            (x2, y),
+            (x2, y2),
+            (x, y2)
+        ])
+
+
+# Returns % of how much do two windows overlap
+def get_overlap(a: PredictedWindow, b: PredictedWindow):
+    intersection = a.rectangle.intersection(b.rectangle)
+    return intersection.area/(img_height*img_width)
+
+
+def get_worse_window(a: PredictedWindow, b: PredictedWindow):
+    if a.percent_score > b.percent_score:
+        return b
+    else:
+        return a

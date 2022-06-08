@@ -9,23 +9,23 @@ from tensorflow import expand_dims
 
 import classifier
 
-image = cv2.imread("00033.png")
+image = cv2.imread("00038.png")
 (winW, winH) = (classifier.img_width, classifier.img_height)
 
 rect_color = (0, 255, 0)
 rect_thickness = 2
 font = cv2.FONT_HERSHEY_SIMPLEX
 font_scale = 0.3
-font_color = (255, 0, 0)
+font_color = (255, 0, 255)
 font_thickness = 1
 
-window_predictions = []
+prediction_windows = []
 scale_step = 1.5
 scale = 1.0  # init
 
 # Loop over the image pyramid
 print("Processing image...")
-for resized in pyramid(image, scale_division_step=scale_step, steps=3):
+for resized in pyramid(image, scale_division_step=scale_step, steps=4):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
 
@@ -40,33 +40,49 @@ for resized in pyramid(image, scale_division_step=scale_step, steps=3):
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
         predictions = classifier.model.predict(img_array, verbose=0)
-        win_pred = classifier.PredictedWindow(predictions, x, y, scale)
-        window_predictions.append(win_pred)
+        pred_win = classifier.PredictedWindow(predictions, x, y, scale)
+        prediction_windows.append(pred_win)
 
     # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
     scale /= scale_step
 
 print("Finished.")
+print("Processing results...")
+
+# Filter predictions
+chosen_prediction_windows = []
+for window in prediction_windows:
+    if window.percent_score > 99.5 and window.predicted_class != '43_nothing':
+        chosen_prediction_windows.append(window)
+
+# Discard overlapping windows with the same predicted class
+for window1 in chosen_prediction_windows:
+    for window2 in chosen_prediction_windows:
+        if window1 != window2 and window1.predicted_class == window2.predicted_class:
+            overlap_ratio = classifier.get_overlap(window1, window2)
+            if overlap_ratio > 0.4:
+                print("Found overlaps of the same class")
+                print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
+                tmp = classifier.get_worse_window(window1, window2)
+                chosen_prediction_windows.remove(tmp)
+
+
 print("Drawing results...")
+for window in chosen_prediction_windows:
+    x = window.x
+    y = window.y
+    w = window.w
+    h = window.h
 
-# Draw predictions
-for window in window_predictions:
+    # text = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
+    text = "{:.2f}%".format(window.percent_score)
+    text2 = window.predicted_class
+    text1_pos = (x+rect_thickness, y+rect_thickness)
+    text2_pos = (x+rect_thickness, y+h-rect_thickness)
 
-    if window.percent_score > 95 and window.predicted_class != '43_nothing':
-        x = window.x
-        y = window.y
-        w = window.w
-        h = window.h
-
-        # text = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
-        text = "{:.2f}%".format(window.percent_score)
-        text2 = window.predicted_class
-        text1_pos = (x+rect_thickness, y+rect_thickness)
-        text2_pos = (x+rect_thickness, y+h-rect_thickness)
-
-        cv2.rectangle(image, (x, y), (x + w, y + h), rect_color, rect_thickness)
-        cv2.putText(image, text, text1_pos, font, font_scale, font_color, font_thickness)
-        cv2.putText(image, text2, text2_pos, font, font_scale, font_color, font_thickness)
+    cv2.rectangle(image, (x, y), (x + w, y + h), rect_color, rect_thickness)
+    cv2.putText(image, text, text1_pos, font, font_scale, font_color, font_thickness)
+    cv2.putText(image, text2, text2_pos, font, font_scale, font_color, font_thickness)
 
 cv2.imshow("Window", image)
 
