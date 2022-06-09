@@ -10,7 +10,9 @@ img_height = 128  # must be same as in model
 img_width = 128
 model = keras.models.load_model('cnn_model')
 
-class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed70', '05_speed80', '06_endSpeed80',
+class_names_shapes = ['00_circle', '01_triangleUp', '12_priorityFull', '13_yield', '14_stop', '43_nothing']
+
+class_names_signs = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed70', '05_speed80', '06_endSpeed80',
                '07_speed100', '08_speed120', '09_noPassSmall', '10_noPassBig', '11_prioritySingleIntersection',
                '12_priorityFull', '13_yield', '14_stop', '15_noEntryAll', '16_noEntryLarge', '17_noEntryOneWay',
                '18_dangerGeneric', '19_dangerCurveLeft', '20_dangerCurveRight', '21_dangerDoubleCurveLR',
@@ -20,6 +22,8 @@ class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed
                '35_mustDriveForward', '36_mustForwardOrRight', '37_mustForwardOrLeft', '38_mustPassObstacleRight',
                '39_mustPassObstacleLeft', '40_roundabout', '41_endNoPassSmall', '42_endNoPassBig', '43_nothing'
                ]
+
+class_names = class_names_signs
 
 print("Finished.")
 
@@ -31,15 +35,12 @@ class PredictedWindow:
     x,y - image origin (position)
     relative_scale - compared to original image
     """
-    def __init__(self, predictions, x, y, relative_scale):
+    def __init__(self, window_tensor, x, y, relative_scale):
+        self.window_tensor = window_tensor
         self.x = x
         self.y = y
         self.w = int(img_width*relative_scale)
         self.h = int(img_height*relative_scale)
-        # self.predictions = predictions  # not needed rn, so save space
-        self.score = nn.softmax(predictions[0])
-        self.percent_score = 100 * np.max(self.score)
-        self.predicted_class = class_names[np.argmax(self.score)]
 
         # Calc rectangle for overlap calculation
         x2 = self.x + self.w
@@ -50,6 +51,17 @@ class PredictedWindow:
             (x2, y2),
             (x, y2)
         ])
+
+        self.predictions = None
+        self.score = None
+        self.percent_score = None
+        self.predicted_class = None
+
+    def set_prediction(self, predictions):
+        # self.predictions = predictions  # not needed rn, so save space
+        self.score = nn.softmax(predictions[0])
+        self.percent_score = 100 * np.max(self.score)
+        self.predicted_class = class_names[np.argmax(self.score)]
 
 
 # Returns % of how much do two windows overlap

@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 from classifier import *
 
-#imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
-imfilepath = 'CustomImages/Test/{:02d}.png'
+imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
+# imfilepath = 'CustomImages/Test/{:02d}.png'
 images = []
 predictions = []
 confidences = []

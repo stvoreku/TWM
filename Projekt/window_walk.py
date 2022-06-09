@@ -8,10 +8,12 @@ from tensorflow import keras
 from tensorflow import expand_dims
 
 import classifier
+import time
 
 image = cv2.imread("00038.png")
-# image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+# greyscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 (winW, winH) = (classifier.img_width, classifier.img_height)
+prediction_batch_size = 10
 
 rect_color = (0, 255, 0)
 rect_thickness = 2
@@ -26,7 +28,8 @@ scale = 1.0  # init
 
 # Loop over the image pyramid
 print("Processing image...")
-for resized in pyramid(image, scale_division_step=scale_step, steps=4):
+start = time.time()
+for resized in pyramid(image, scale_division_step=scale_step, steps=2):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
 
@@ -35,17 +38,38 @@ for resized in pyramid(image, scale_division_step=scale_step, steps=4):
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
 
-        # Classify window using CCN model:
+        # Save window for batched predicting:
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
-        predictions = classifier.model.predict(img_array, verbose=0)
-        pred_win = classifier.PredictedWindow(predictions, x, y, scale)
+        # predictions = classifier.model.predict(img_array, verbose=0)
+        pred_win = classifier.PredictedWindow(img_array, x, y, scale)
         prediction_windows.append(pred_win)
+
+    # Classify windows in batches:
+    while len(prediction_windows) > 0:
+        batch = []
+        if len(prediction_windows) >= prediction_batch_size:
+            for _ in range(prediction_batch_size):
+                batch.append(prediction_windows[0])
+                prediction_windows.pop(0)
+        else:
+            for w in prediction_windows:
+                batch.append(prediction_windows[0])
+                prediction_windows.pop(0)
+
+        tensor_batch = []
+        for w in batch:
+            tensor_batch.append(w.window_tensor)
+
+        predictions = classifier.model.predict(tensor_batch, verbose=0)
+
+        for i in range(len(batch)):
+            batch[i].set_prediction(predictions[i])
 
     # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
     scale /= scale_step
 
-print("Finished.")
+print("Finished after", time.time()-start, "seconds.")
 print("Processing results...")
 
 # Filter predictions
