@@ -10,6 +10,7 @@ from tensorflow import expand_dims
 import classifier
 
 image = cv2.imread("00038.png")
+# image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 (winW, winH) = (classifier.img_width, classifier.img_height)
 
 rect_color = (0, 255, 0)
@@ -34,9 +35,7 @@ for resized in pyramid(image, scale_division_step=scale_step, steps=4):
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
 
-        # THIS IS WHERE YOU WOULD PROCESS YOUR WINDOW, SUCH AS APPLYING A
-        # MACHINE LEARNING CLASSIFIER TO CLASSIFY THE CONTENTS OF THE WINDOW
-        # since we do not have a classifier, we'll just draw the window
+        # Classify window using CCN model:
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
         predictions = classifier.model.predict(img_array, verbose=0)
