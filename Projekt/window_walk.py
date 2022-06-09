@@ -10,8 +10,9 @@ from tensorflow import expand_dims
 import classifier
 import time
 
-image = cv2.imread("00038.png")
-# image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+image = cv2.imread("00033.png")
+display_img = image
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 (winW, winH) = (classifier.img_width, classifier.img_height)
 
 rect_color = (0, 255, 0)
@@ -81,11 +82,11 @@ for window in chosen_prediction_windows:
     text1_pos = (x+rect_thickness, y+rect_thickness)
     text2_pos = (x+rect_thickness, y+h-rect_thickness)
 
-    cv2.rectangle(image, (x, y), (x + w, y + h), rect_color, rect_thickness)
-    cv2.putText(image, text, text1_pos, font, font_scale, font_color, font_thickness)
-    cv2.putText(image, text2, text2_pos, font, font_scale, font_color, font_thickness)
+    cv2.rectangle(display_img, (x, y), (x + w, y + h), rect_color, rect_thickness)
+    cv2.putText(display_img, text, text1_pos, font, font_scale, font_color, font_thickness)
+    cv2.putText(display_img, text2, text2_pos, font, font_scale, font_color, font_thickness)
 
-cv2.imshow("Window", image)
+cv2.imshow("Window", display_img)
 
 # Keep the final image, press Escape to exit
 key = cv2.waitKey(0)
