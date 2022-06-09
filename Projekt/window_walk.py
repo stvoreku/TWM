@@ -8,6 +8,7 @@ from tensorflow import keras
 from tensorflow import expand_dims
 
 import classifier
+import time
 
 image = cv2.imread("00038.png")
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
@@ -26,6 +27,7 @@ scale = 1.0  # init
 
 # Loop over the image pyramid
 print("Processing image...")
+start = time.time()
 for resized in pyramid(image, scale_division_step=scale_step, steps=4):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
@@ -38,14 +40,14 @@ for resized in pyramid(image, scale_division_step=scale_step, steps=4):
         # Classify window using CCN model:
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
-        predictions = classifier.model.predict(img_array, verbose=0)
+        predictions = classifier.model(img_array)
         pred_win = classifier.PredictedWindow(predictions, x, y, scale)
         prediction_windows.append(pred_win)
 
     # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
     scale /= scale_step
 
-print("Finished.")
+print("Finished in", time.time()-start, "seconds.")
 print("Processing results...")
 
 # Filter predictions
