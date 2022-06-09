@@ -54,7 +54,7 @@ print("Processing results...")
 # Filter predictions
 chosen_prediction_windows = []
 for window in prediction_windows:
-    if window.percent_score > 99.5 and window.predicted_class != '43_nothing':
+    if window.score > 0.95 and window.predicted_class != '43_nothing':
         chosen_prediction_windows.append(window)
 
 # Discard overlapping windows with the same predicted class
@@ -77,7 +77,7 @@ for window in chosen_prediction_windows:
     h = window.h
 
     # text = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
-    text = "{:.2f}%".format(window.percent_score)
+    text = "{:.3f}".format(window.score)
     text2 = window.predicted_class
     text1_pos = (x+rect_thickness, y+rect_thickness)
     text2_pos = (x+rect_thickness, y+h-rect_thickness)

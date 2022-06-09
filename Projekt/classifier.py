@@ -8,7 +8,7 @@ print("Loading model...")
 
 img_height = 128  # must be same as in model
 img_width = 128
-model = keras.models.load_model('cnn_model_shapes_grayscale')
+model = keras.models.load_model('cnn_model')
 
 shapes = ['00_circle', '01_triangleUp', '12_priorityFull', '13_yield', '14_stop', '43_nothing']
 
@@ -41,9 +41,9 @@ class PredictedWindow:
         self.w = int(img_width*relative_scale)
         self.h = int(img_height*relative_scale)
         # self.predictions = predictions  # not needed rn, so save space
-        self.score = nn.softmax(predictions[0])
-        self.percent_score = 100 * np.max(self.score)
-        self.predicted_class = class_names[np.argmax(self.score)]
+        self.softmax_predictions = nn.softmax(predictions[0])
+        self.score = np.max(self.softmax_predictions)  # 0..1
+        self.predicted_class = class_names[np.argmax(self.softmax_predictions)]
 
         # Calc rectangle for overlap calculation
         x2 = self.x + self.w
@@ -63,7 +63,7 @@ def get_overlap(a: PredictedWindow, b: PredictedWindow):
 
 
 def get_worse_window(a: PredictedWindow, b: PredictedWindow):
-    if a.percent_score > b.percent_score:
+    if a.score > b.score:
         return b
     else:
         return a
