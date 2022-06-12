@@ -1,7 +1,7 @@
 import imutils
 
 
-def pyramid(image, scale_division_step=1.5, steps=1):
+def scale_pyramid(image, scale_division_step=1.5, steps=1):
     # yield the original image
     yield image
 

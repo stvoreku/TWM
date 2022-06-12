@@ -2,7 +2,7 @@
 # https://pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/
 
 import cv2  # opencv-python
-from helpers import pyramid, sliding_window
+from window_slider import scale_pyramid, sliding_window
 
 from tensorflow import keras
 from tensorflow import expand_dims
@@ -10,7 +10,7 @@ from tensorflow import expand_dims
 import classifier
 import time
 
-image = cv2.imread("00033.png")
+image = cv2.imread("detection_test_images/00033.png")
 display_img = image
 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 (winW, winH) = (classifier.img_width, classifier.img_height)
@@ -29,7 +29,7 @@ scale = 1.0  # init
 # Loop over the image pyramid
 print("Processing image...")
 start = time.time()
-for resized in pyramid(image, scale_division_step=scale_step, steps=4):
+for resized in scale_pyramid(image, scale_division_step=scale_step, steps=4):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
 

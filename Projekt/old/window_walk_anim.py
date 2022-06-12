@@ -3,13 +3,13 @@
 
 import cv2  # opencv-python
 import time
-from helpers import pyramid, sliding_window
+from window_slider import scale_pyramid, sliding_window
 
-image = cv2.imread("00033.png")
+image = cv2.imread("../detection_test_images/00033.png")
 (winW, winH) = (128, 128)
 
 # loop over the image pyramid
-for resized in pyramid(image, scale_division_step=1.5):
+for resized in scale_pyramid(image, scale_division_step=1.5):
     # loop over the sliding window for each layer of the pyramid
     for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
         # if the window does not meet our desired window size, ignore it

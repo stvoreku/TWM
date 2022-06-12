@@ -2,7 +2,7 @@
 # Used to generate non-sign dataset
 
 import cv2  # opencv-python
-from helpers import sliding_window
+from window_slider import sliding_window
 import os
 from classifier import img_height, img_width
 
@@ -21,7 +21,7 @@ for filename in os.listdir(path_of_the_directory):
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
         f_name = filename + str(i) + ".png"
-        filepath = os.path.join("GTSRB/Training/43_nothing", f_name)
+        filepath = os.path.join("../GTSRB/Training/43_nothing", f_name)
         print(filepath)
         cv2.imwrite(filepath, window)
         i += 1
