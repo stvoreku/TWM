@@ -1,7 +1,7 @@
-from keras import backend as K
-from keras.engine.topology import Layer
-from .tf_hog import tf_hog_descriptor
+from keras.layers import Layer
+from tf_hog import tf_hog_descriptor
 from math import ceil, floor
+
 
 class HOG(Layer):
     def __init__(self,
@@ -21,7 +21,7 @@ class HOG(Layer):
     def build(self, input_shape):
         super(HOG, self).build(input_shape)
 
-    def call(self, x):
+    def call(self, x, *args, **kwargs):
         hog_descriptor = tf_hog_descriptor(x,
                                            self.cell_size,
                                            self.block_size,
@@ -43,4 +43,4 @@ class HOG(Layer):
                 self.block_size * self.n_bins
         if not self.grayscale:
             num_dim *= 3
-        return (input_shape[0], num_dim)
+        return input_shape[0], num_dim
