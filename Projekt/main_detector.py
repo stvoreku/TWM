@@ -8,7 +8,7 @@ from tensorflow import keras
 from tensorflow import expand_dims
 
 import helpers.classifier_grayscale_shapes as classifier
-import predicted_window
+from helpers import predicted_window
 import time
 
 # ------- Display settings ------- #

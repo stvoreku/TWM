@@ -4,7 +4,7 @@
 import cv2  # opencv-python
 from helpers.window_slider import sliding_window
 import os
-from predicted_window import img_height, img_width
+from helpers.predicted_window import img_height, img_width
 
 
 (winW, winH) = (img_width, img_height)

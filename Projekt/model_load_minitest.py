@@ -1,9 +1,10 @@
 from tensorflow import nn
 from tensorflow import expand_dims
 import numpy as np
+import keras.utils
 import matplotlib.pyplot as plt
 
-from predicted_window import *
+import helpers.classifier_rgb_signs as classifier
 
 #imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
 imfilepath = 'classification_test_images/Test/{:02d}.png'
@@ -17,13 +18,13 @@ plt.figure(figsize=(10, 10))
 
 for i,a in enumerate(range(4,13)):
     fp = imfilepath.format(a)
-    img = keras.utils.load_img(fp, target_size=(img_height, img_width))
+    img = keras.utils.load_img(fp, target_size=(classifier.img_height, classifier.img_width))
     img_array = keras.utils.img_to_array(img)
     img_array = expand_dims(img_array, 0)  # Zamiana w tensor, inaczej kształt się nie zgadza
 
-    predictions = model.predict(img_array)
+    predictions = classifier.model(img_array)
     score = nn.softmax(predictions[0])
-    predicted_class = class_names[np.argmax(score)]
+    predicted_class = classifier.class_names[np.argmax(score)]
     answer_string = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
 
     ax = plt.subplot(3, 3, i + 1)
