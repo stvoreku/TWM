@@ -2,25 +2,33 @@
 # https://pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/
 
 import cv2  # opencv-python
-from window_slider import scale_pyramid, sliding_window
+from helpers.window_slider import scale_pyramid, sliding_window
 
 from tensorflow import keras
 from tensorflow import expand_dims
 
-import classifier
+import helpers.classifier_grayscale_shapes as classifier
+import predicted_window
 import time
 
-image = cv2.imread("detection_test_images/00033.png")
-display_img = image
-image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
-(winW, winH) = (classifier.img_width, classifier.img_height)
-
+# ------- Display settings ------- #
 rect_color = (0, 255, 0)
 rect_thickness = 2
 font = cv2.FONT_HERSHEY_SIMPLEX
 font_scale = 0.3
 font_color = (255, 0, 255)
 font_thickness = 1
+
+# ------- Set up ------- #
+
+image = cv2.imread("detection_test_images/00033.png")
+display_img = image  # Keep RGB image for display even when using grayscale
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+
+# Sliding window size:
+(winW, winH) = (classifier.img_width, classifier.img_height)
+
+# ------- Main ------- #
 
 prediction_windows = []
 scale_step = 1.5
@@ -42,7 +50,10 @@ for resized in scale_pyramid(image, scale_division_step=scale_step, steps=4):
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
         predictions = classifier.model(img_array)
-        pred_win = classifier.PredictedWindow(predictions, x, y, scale)
+
+        w = int(classifier.img_width*scale)
+        h = int(classifier.img_height*scale)
+        pred_win = predicted_window.PredictedWindow(predictions, classifier.class_names, x, y, w, h)
         prediction_windows.append(pred_win)
 
     # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
@@ -61,11 +72,11 @@ for window in prediction_windows:
 for window1 in chosen_prediction_windows:
     for window2 in chosen_prediction_windows:
         if window1 != window2 and window1.predicted_class == window2.predicted_class:
-            overlap_ratio = classifier.get_overlap(window1, window2)
+            overlap_ratio = predicted_window.get_overlap(window1, window2)
             if overlap_ratio > 0.4:
                 print("Found overlaps of the same class")
                 print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
-                tmp = classifier.get_worse_window(window1, window2)
+                tmp = predicted_window.get_worse_window(window1, window2)
                 chosen_prediction_windows.remove(tmp)
 
 

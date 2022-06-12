@@ -3,7 +3,7 @@ from tensorflow import expand_dims
 import numpy as np
 import matplotlib.pyplot as plt
 
-from classifier import *
+from predicted_window import *
 
 #imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
 imfilepath = 'classification_test_images/Test/{:02d}.png'

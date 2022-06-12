@@ -114,9 +114,9 @@ plt.show()
 # model.save('cnn_model')
 
 # W Google Colab:
-# !zip -r cnn_model.zip cnn_model
+# !zip -r cnn_model_rgb_signs.zip cnn_model
 # from google.colab import files
-# files.download('cnn_model.zip')
+# files.download('cnn_model_rgb_signs.zip')
 
 # Save class_names
 

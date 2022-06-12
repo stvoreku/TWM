@@ -2,9 +2,9 @@
 # Used to generate non-sign dataset
 
 import cv2  # opencv-python
-from window_slider import sliding_window
+from helpers.window_slider import sliding_window
 import os
-from classifier import img_height, img_width
+from predicted_window import img_height, img_width
 
 
 (winW, winH) = (img_width, img_height)

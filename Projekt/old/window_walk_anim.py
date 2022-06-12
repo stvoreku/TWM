@@ -3,7 +3,7 @@
 
 import cv2  # opencv-python
 import time
-from window_slider import scale_pyramid, sliding_window
+from helpers.window_slider import scale_pyramid, sliding_window
 
 image = cv2.imread("../detection_test_images/00033.png")
 (winW, winH) = (128, 128)
