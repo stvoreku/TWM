@@ -8,8 +8,11 @@ from tensorflow import keras
 from tensorflow import expand_dims
 
 import classifier
+import time
 
-image = cv2.imread("00038.png")
+image = cv2.imread("00033.png")
+display_img = image
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 (winW, winH) = (classifier.img_width, classifier.img_height)
 
 rect_color = (0, 255, 0)
@@ -25,6 +28,7 @@ scale = 1.0  # init
 
 # Loop over the image pyramid
 print("Processing image...")
+start = time.time()
 for resized in pyramid(image, scale_division_step=scale_step, steps=4):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
@@ -34,25 +38,23 @@ for resized in pyramid(image, scale_division_step=scale_step, steps=4):
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
 
-        # THIS IS WHERE YOU WOULD PROCESS YOUR WINDOW, SUCH AS APPLYING A
-        # MACHINE LEARNING CLASSIFIER TO CLASSIFY THE CONTENTS OF THE WINDOW
-        # since we do not have a classifier, we'll just draw the window
+        # Classify window using CCN model:
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
-        predictions = classifier.model.predict(img_array, verbose=0)
+        predictions = classifier.model(img_array)
         pred_win = classifier.PredictedWindow(predictions, x, y, scale)
         prediction_windows.append(pred_win)
 
     # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
     scale /= scale_step
 
-print("Finished.")
+print("Finished in", time.time()-start, "seconds.")
 print("Processing results...")
 
 # Filter predictions
 chosen_prediction_windows = []
 for window in prediction_windows:
-    if window.percent_score > 99.5 and window.predicted_class != '43_nothing':
+    if window.score > 0.95 and window.predicted_class != '43_nothing':
         chosen_prediction_windows.append(window)
 
 # Discard overlapping windows with the same predicted class
@@ -75,16 +77,16 @@ for window in chosen_prediction_windows:
     h = window.h
 
     # text = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
-    text = "{:.2f}%".format(window.percent_score)
+    text = "{:.3f}".format(window.score)
     text2 = window.predicted_class
     text1_pos = (x+rect_thickness, y+rect_thickness)
     text2_pos = (x+rect_thickness, y+h-rect_thickness)
 
-    cv2.rectangle(image, (x, y), (x + w, y + h), rect_color, rect_thickness)
-    cv2.putText(image, text, text1_pos, font, font_scale, font_color, font_thickness)
-    cv2.putText(image, text2, text2_pos, font, font_scale, font_color, font_thickness)
+    cv2.rectangle(display_img, (x, y), (x + w, y + h), rect_color, rect_thickness)
+    cv2.putText(display_img, text, text1_pos, font, font_scale, font_color, font_thickness)
+    cv2.putText(display_img, text2, text2_pos, font, font_scale, font_color, font_thickness)
 
-cv2.imshow("Window", image)
+cv2.imshow("Window", display_img)
 
 # Keep the final image, press Escape to exit
 key = cv2.waitKey(0)
