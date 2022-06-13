@@ -12,6 +12,7 @@ from helpers import predicted_window
 import time
 
 # ------- Display settings ------- #
+
 rect_color = (0, 255, 0)
 rect_thickness = 2
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -24,6 +25,10 @@ font_thickness = 1
 image = cv2.imread("detection_test_images/00033.png")
 display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+
+score_threshold = 0.95
+filter_on = False  # filters to leave only high-score detections that aren't 43_nothing
+remove_overlaps = False
 
 # ------- Main ------- #
 
@@ -54,21 +59,25 @@ print("Finished in", time.time()-start, "seconds.")
 print("Processing results...")
 
 # Filter predictions
-chosen_prediction_windows = []
-for window in prediction_windows:
-    if window.score > 0.95 and window.predicted_class != '43_nothing':
-        chosen_prediction_windows.append(window)
+if filter_on:
+    chosen_prediction_windows = []
+    for window in prediction_windows:
+        if window.score > 0.95 and window.predicted_class != '43_nothing':
+            chosen_prediction_windows.append(window)
+else:
+    chosen_prediction_windows = prediction_windows
 
 # Discard overlapping windows with the same predicted class
-for window1 in chosen_prediction_windows:
-    for window2 in chosen_prediction_windows:
-        if window1 != window2 and window1.predicted_class == window2.predicted_class:
-            overlap_ratio = predicted_window.get_overlap(window1, window2)
-            if overlap_ratio > 0.4:
-                print("Found overlaps of the same class")
-                print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
-                tmp = predicted_window.get_worse_window(window1, window2)
-                chosen_prediction_windows.remove(tmp)
+if remove_overlaps:
+    for window1 in chosen_prediction_windows:
+        for window2 in chosen_prediction_windows:
+            if window1 != window2 and window1.predicted_class == window2.predicted_class:
+                overlap_ratio = predicted_window.get_overlap(window1, window2)
+                if overlap_ratio > 0.4:
+                    print("Found overlaps of the same class")
+                    print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
+                    tmp = predicted_window.get_worse_window(window1, window2)
+                    chosen_prediction_windows.remove(tmp)
 
 
 print("Drawing results...")
