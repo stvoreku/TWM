@@ -1,5 +1,12 @@
 # Default ignored files
-/shelf/
-/workspace.xml
+/Projekt/shelf/
+/Projekt/workspace.xml
 
-/cnn_model/
+/Projekt/.idea/
+/Projekt/misc.xml
+
+
+/Projekt/models/cnn_model_rgb_signs/
+/Projekt/models/cnn_model_grayscale/
+/Projekt/models/cnn_model_shapes_grayscale/
+/Projekt/models/cnn_model_signs_grayscale/
