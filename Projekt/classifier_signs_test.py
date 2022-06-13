@@ -12,7 +12,8 @@ def ceiling_division(numerator, denominator):
     return -(-numerator // denominator)
 
 
-imfilepath = 'classification_test_images/ClassTest/'
+# imfilepath = 'classification_test_images/ClassTest/'
+imfilepath = 'classification_test_images/ClassTestGTSRB/'
 
 filenames = os.listdir(imfilepath)
 
