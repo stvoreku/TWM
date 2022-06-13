@@ -40,7 +40,7 @@ for i in range(count):
     if predicted_class in filenames[i]:
         true_pos += 1
     else:
-        print("Error. Predicted", predicted_class, "for", filenames[i])
+        # print("Error. Predicted", predicted_class, "for", filenames[i])
         data = [img, answer_string]
         display_data.append(data)
 
@@ -58,9 +58,11 @@ print('False positive:', false_pos, '/', count)
 errors = false_neg+false_pos+misclassified
 print('Error rate:', errors, '/', count)
 
+print('Displaying detection errors.')
+
 chart_w = 7
 chart_h = ceiling_division(errors, chart_w)
-print('chart h:', chart_h)
+# print('chart h:', chart_h)
 plt.figure(figsize=(12, 6))  # rozmiar w calach
 
 for i in range(len(display_data)):
@@ -73,5 +75,4 @@ for i in range(len(display_data)):
     plt.title(answer_string)
     plt.axis("off")
 plt.show()
-
 
