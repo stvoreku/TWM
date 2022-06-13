@@ -67,7 +67,7 @@ def extract_blue(imag):
 			regions.append((cY - int(1.2 * w), cY + int(1.2 * w), cX - int(1.2 * h), cX + int(1.2 * w)))
 		except:
 			pass
-	return extracted
+	return extracted, regions
 
 def extract_red(imag):
 
@@ -140,7 +140,7 @@ def extract_red(imag):
 			regions.append((cY - int(1.2*w), cY + int(1.2*w), cX - int(1.2*h), cX + int(1.2*w)))
 		except:
 			pass
-	return extracted
+	return extracted, regions
 
 
 def extract_regions(imag):
