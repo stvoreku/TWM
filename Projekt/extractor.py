@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+sc = 0.8
 
 def extract_blue(imag):
 	mser_blue = cv2.MSER_create(8, 400, 4000)
@@ -59,12 +60,16 @@ def extract_blue(imag):
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
+		if w>h:
+			w=h
+		else:
+			h=w
 		#cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
-		cropped_image = img[cY - int(1.2*w):cY + int(1.2*w), cX - int(1.2*h):(cX + int(1.2*w))]
+		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
 		try:
 			resized_image = cv2.resize(cropped_image, (128,128))
 			extracted.append(resized_image)
-			regions.append((cY - int(1.2 * w), cY + int(1.2 * w), cX - int(1.2 * h), cX + int(1.2 * w)))
+			regions.append((cX - int(sc*h), cY - int(sc*w), cX + int(sc*h), cY + int(sc*w)))
 		except:
 			pass
 	return extracted, regions
@@ -132,14 +137,20 @@ def extract_red(imag):
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
+		if w>h:
+			w=h
+		else:
+			h=w
 		#cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
-		cropped_image = img[cY - int(1.2*w):cY + int(1.2*w), cX - int(1.2*h):(cX + int(1.2*w))]
+		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
 		try:
 			resized_image = cv2.resize(cropped_image, (128,128))
 			extracted.append(resized_image)
-			regions.append((cY - int(1.2*w), cY + int(1.2*w), cX - int(1.2*h), cX + int(1.2*w)))
+			regions.append((cX - int(sc*h), cY - int(sc*w), cX + int(sc*h), cY + int(sc*w)))
 		except:
 			pass
+
+
 	return extracted, regions
 
 
@@ -147,5 +158,5 @@ def extract_regions(imag):
 	extracted_r, regions_r = extract_red(imag)
 	extracted_b, regions_b = extract_blue(imag)
 	extracted = extracted_r + extracted_b
-	regions = regions_r + regions_b
+	regions = regions_b + regions_r
 	return extracted, regions
