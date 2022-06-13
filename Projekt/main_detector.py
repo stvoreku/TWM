@@ -25,16 +25,9 @@ image = cv2.imread("detection_test_images/00033.png")
 display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
-# Sliding window size:
-(winW, winH) = (classifier.img_width, classifier.img_height)
-
 # ------- Main ------- #
 
 prediction_windows = []
-scale_step = 1.5
-scale = 1.0  # init
-
-# Loop over the image pyramid
 print("Processing image...")
 start = time.time()
 
@@ -101,4 +94,3 @@ cv2.imshow("Window", display_img)
 key = cv2.waitKey(0)
 if key == 27:
     cv2.destroyAllWindows()
-
