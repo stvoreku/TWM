@@ -1,5 +1,5 @@
 
-import helpers.classifier_gray_signs as classifier
+import helpers.classifier_rgb_signs as classifier
 import os
 from tensorflow import nn
 from tensorflow import expand_dims
@@ -29,7 +29,7 @@ misclassified = 0
 for i in range(count):
     fp = imfilepath + filenames[i]
 
-    img = keras.utils.load_img(fp, grayscale=True, target_size=(classifier.img_height, classifier.img_width))
+    img = keras.utils.load_img(fp, grayscale=False, target_size=(classifier.img_height, classifier.img_width))
     img_array = keras.utils.img_to_array(img)
     img_array = expand_dims(img_array, 0)
 

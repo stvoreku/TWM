@@ -3,7 +3,7 @@
 
 import cv2  # opencv-python
 
-import extractor
+import extractor2 as extractor
 from tensorflow import keras
 from tensorflow import expand_dims
 
@@ -24,8 +24,10 @@ font_thickness = 1
 
 image = cv2.imread("detection_test_images/00033.png")
 # image = cv2.imread("detection_test_images/pol_09.png")
-display_img = image  # Keep RGB image for display even when using grayscale
+# display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+display_img = image
 
 score_threshold = 0.95
 filter_on = False  # filters to leave only high-score detections that aren't 43_nothing
