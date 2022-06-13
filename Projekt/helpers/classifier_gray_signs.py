@@ -2,7 +2,7 @@ from tensorflow import keras
 
 img_height = 128  # must be same as in model
 img_width = 128
-model = keras.models.load_model('cnn_model_signs_grayscale')
+model = keras.models.load_model('models/cnn_model_signs_grayscale')
 
 class_names = ['00_speed20', '01_speed30', '02_speed50', '03_speed60', '04_speed70', '05_speed80', '06_endSpeed80',
                '07_speed100', '08_speed120', '09_noPassSmall', '10_noPassBig', '11_prioritySingleIntersection',
