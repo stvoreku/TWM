@@ -2,12 +2,12 @@
 # https://pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/
 
 import cv2  # opencv-python
-from helpers.window_slider import scale_pyramid, sliding_window
 
+import extractor
 from tensorflow import keras
 from tensorflow import expand_dims
 
-import helpers.classifier_grayscale_shapes as classifier
+import helpers.classifier_rgb_signs as classifier
 from helpers import predicted_window
 import time
 
@@ -23,7 +23,7 @@ font_thickness = 1
 
 image = cv2.imread("detection_test_images/00033.png")
 display_img = image  # Keep RGB image for display even when using grayscale
-image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+# image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
 # Sliding window size:
 (winW, winH) = (classifier.img_width, classifier.img_height)
@@ -37,27 +37,25 @@ scale = 1.0  # init
 # Loop over the image pyramid
 print("Processing image...")
 start = time.time()
-for resized in scale_pyramid(image, scale_division_step=scale_step, steps=4):
-    # Loop over the sliding window for each layer of the pyramid
-    clone = resized.copy()
 
-    for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
-        # If the window does not meet our desired window size, ignore it
-        if window.shape[0] != winH or window.shape[1] != winW:
-            continue
+arr, regions = extractor.extract_regions(image)
+count = len(arr)
 
-        # Classify window using CCN model:
-        img_array = keras.utils.img_to_array(window)
-        img_array = expand_dims(img_array, 0)
-        predictions = classifier.model(img_array)
+for i in range(count):
+    region = regions[i]
+    window = arr[i]
+    x = region[0]
+    y = region[1]
+    w = region[2] - x
+    h = region[3] - y
 
-        w = int(classifier.img_width*scale)
-        h = int(classifier.img_height*scale)
-        pred_win = predicted_window.PredictedWindow(predictions, classifier.class_names, x, y, w, h)
-        prediction_windows.append(pred_win)
+    # Classify window using CCN model:
+    img_array = keras.utils.img_to_array(window)
+    img_array = expand_dims(img_array, 0)
+    predictions = classifier.model(img_array)
 
-    # Pyramid starts from scale one, so we need to do this at the end of the loop iteration:
-    scale /= scale_step
+    pred_win = predicted_window.PredictedWindow(predictions, classifier.class_names, x, y, w, h)
+    prediction_windows.append(pred_win)
 
 print("Finished in", time.time()-start, "seconds.")
 print("Processing results...")
