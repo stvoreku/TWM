@@ -23,6 +23,7 @@ font_thickness = 1
 # ------- Set up ------- #
 
 image = cv2.imread("detection_test_images/00033.png")
+# image = cv2.imread("detection_test_images/pol_09.png")
 display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
@@ -37,15 +38,14 @@ print("Processing image...")
 start = time.time()
 
 arr, regions = extractor.extract_regions(image)
-count = len(arr)
 
-for i in range(count):
-    region = regions[i]
-    window = arr[i]
+for i, region in enumerate(regions):
     x = region[0]
     y = region[1]
     w = region[2] - x
     h = region[3] - y
+    window = image[y:y + h, x:x + w]
+    window = cv2.resize(window, dsize=(128, 128))
 
     # Classify window using CCN model:
     img_array = keras.utils.img_to_array(window)
@@ -55,6 +55,7 @@ for i in range(count):
     pred_win = predicted_window.PredictedWindow(predictions, classifier.class_names, x, y, w, h)
     prediction_windows.append(pred_win)
 
+# print(len(prediction_windows))
 print("Finished in", time.time()-start, "seconds.")
 print("Processing results...")
 
