@@ -61,8 +61,11 @@ def extract_blue(imag):
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
 		if w>h:
+			#print(w / h)
 			w=h
+
 		else:
+			#print(h / w)
 			h=w
 		#cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
 		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
@@ -91,12 +94,12 @@ def extract_red(imag):
 	img_hsv = cv2.cvtColor(imag, cv2.COLOR_BGR2HSV)
 
 	# mask to extract blue
-	lower_red1 = np.array([0, 0, 0])
-	upper_red1 = np.array([20, 255, 255])
+	lower_red1 = np.array([0, 60, 60])
+	upper_red1 = np.array([15, 240, 240])
 	mask1 = cv2.inRange(img_hsv, lower_red1, upper_red1)
 
-	lower_red2 = np.array([160, 0, 0])
-	upper_red2 = np.array([180, 255, 255])
+	lower_red2 = np.array([170, 60, 60])
+	upper_red2 = np.array([180, 240, 240])
 	mask2 = cv2.inRange(img_hsv, lower_red2, upper_red2)
 	mask = mask1 + mask2
 
@@ -138,9 +141,13 @@ def extract_red(imag):
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
 		if w>h:
+			print(w / h)
 			w=h
+
 		else:
+			print(h / w)
 			h=w
+
 		#cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
 		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
 		try:
