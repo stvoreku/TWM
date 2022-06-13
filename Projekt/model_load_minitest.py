@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import helpers.classifier_rgb_signs as classifier
 
 #imfilepath = 'GTSRB-2/Final_Test/Images/000{:02d}.ppm.png'  # formatowanie do 01, 02, etc.
-imfilepath = 'classification_test_images/Test/{:02d}.png'
+imfilepath = 'classification_test_images/Unlabelled/{:02d}.png'
 images = []
 predictions = []
 confidences = []
