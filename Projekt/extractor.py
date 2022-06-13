@@ -52,6 +52,7 @@ def extract_blue(imag):
 
 	cnts, hierarchy = cv2.findContours(b_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	extracted = []
+	regions = []
 	for i, c in enumerate(cnts):
 		M = cv2.moments(c)
 
@@ -63,6 +64,7 @@ def extract_blue(imag):
 		try:
 			resized_image = cv2.resize(cropped_image, (128,128))
 			extracted.append(resized_image)
+			regions.append((cY - int(1.2 * w), cY + int(1.2 * w), cX - int(1.2 * h), cX + int(1.2 * w)))
 		except:
 			pass
 	return extracted
@@ -123,6 +125,7 @@ def extract_red(imag):
 
 	cnts, hierarchy = cv2.findContours(b_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	extracted = []
+	regions = []
 	for i, c in enumerate(cnts):
 		M = cv2.moments(c)
 
@@ -134,13 +137,15 @@ def extract_red(imag):
 		try:
 			resized_image = cv2.resize(cropped_image, (128,128))
 			extracted.append(resized_image)
+			regions.append((cY - int(1.2*w), cY + int(1.2*w), cX - int(1.2*h), cX + int(1.2*w)))
 		except:
 			pass
 	return extracted
 
 
 def extract_regions(imag):
-	extracted_r = extract_red(imag)
-	extracted_b = extract_blue(imag)
+	extracted_r, regions_r = extract_red(imag)
+	extracted_b, regions_b = extract_blue(imag)
 	extracted = extracted_r + extracted_b
-	return extracted
+	regions = regions_r + regions_b
+	return extracted, regions
