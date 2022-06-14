@@ -8,7 +8,7 @@ from tensorflow import keras
 from tensorflow import expand_dims
 
 import helpers.classifier_rgb_signs as classifier
-from helpers import predicted_window
+from helpers import predicted_window, normalize_rgb
 import time
 
 # ------- Display settings ------- #
@@ -26,7 +26,7 @@ image = cv2.imread("detection_test_images/00033.png")
 # image = cv2.imread("detection_test_images/pol_09.png")
 # display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
-image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+image = normalize_rgb.normalize_rgb(image)
 display_img = image
 
 score_threshold = 0.95
