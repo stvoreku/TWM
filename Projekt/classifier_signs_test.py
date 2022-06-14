@@ -1,5 +1,5 @@
 
-import helpers.classifier_rgb_signs as classifier
+import helpers.classifier_hog_signs as classifier
 import os
 from tensorflow import nn
 from tensorflow import expand_dims
@@ -7,13 +7,15 @@ import numpy as np
 import keras.utils
 import matplotlib.pyplot as plt
 
+from skimage.feature import hog
+
 
 def ceiling_division(numerator, denominator):
     return -(-numerator // denominator)
 
 
-# imfilepath = 'classification_test_images/ClassTest/'
-imfilepath = 'classification_test_images/ClassTestGTSRB/'
+imfilepath = 'classification_test_images/ClassTest/'
+# imfilepath = 'classification_test_images/ClassTestGTSRB/'
 
 filenames = os.listdir(imfilepath)
 
@@ -29,8 +31,10 @@ misclassified = 0
 for i in range(count):
     fp = imfilepath + filenames[i]
 
-    img = keras.utils.load_img(fp, grayscale=False, target_size=(classifier.img_height, classifier.img_width))
-    img_array = keras.utils.img_to_array(img)
+    img = keras.utils.load_img(fp, grayscale=True, target_size=(classifier.img_height, classifier.img_width))
+    fd, hog_image = hog(img, orientations=9, pixels_per_cell=(4, 4),
+                        cells_per_block=(2, 2), visualize=True, multichannel=False)
+    img_array = keras.utils.img_to_array(hog_image)
     img_array = expand_dims(img_array, 0)
 
     predictions = classifier.model(img_array)
@@ -42,7 +46,7 @@ for i in range(count):
         true_pos += 1
     else:
         # print("Error. Predicted", predicted_class, "for", filenames[i])
-        data = [img, answer_string]
+        data = [hog_image, answer_string]
         display_data.append(data)
 
         if '43_nothing' in filenames[i]:

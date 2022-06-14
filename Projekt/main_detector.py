@@ -7,9 +7,11 @@ import extractor2 as extractor
 from tensorflow import keras
 from tensorflow import expand_dims
 
-import helpers.classifier_rgb_signs as classifier
+import helpers.classifier_hog_signs as classifier
 from helpers import predicted_window
 import time
+
+from skimage.feature import hog
 
 # ------- Display settings ------- #
 
@@ -26,7 +28,7 @@ image = cv2.imread("detection_test_images/00033.png")
 # image = cv2.imread("detection_test_images/pol_09.png")
 # display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
-image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+# image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
 display_img = image
 score_threshold = 0.95
 filter_on = False  # filters to leave only high-score detections that aren't 43_nothing
@@ -49,7 +51,10 @@ for i, region in enumerate(regions):
     window = cv2.resize(window, dsize=(128, 128))
 
     # Classify window using CCN model:
-    img_array = keras.utils.img_to_array(window)
+    window = cv2.cvtColor(window, cv2.COLOR_BGR2GRAY)
+    fd, hog_image = hog(window, orientations=9, pixels_per_cell=(4, 4),
+                        cells_per_block=(2, 2), visualize=True, multichannel=False)
+    img_array = keras.utils.img_to_array(hog_image)
     img_array = expand_dims(img_array, 0)
     predictions = classifier.model(img_array)
 
