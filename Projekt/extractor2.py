@@ -7,16 +7,16 @@ sc = 0.8
 def extract_blue(img):
 	hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-	lower_blue = np.array([90, 60, 60])
-	upper_blue = np.array([120, 240, 240])
+	lower_blue = np.array([100, 60, 40])
+	upper_blue = np.array([130, 255, 200])
 
 	mask = cv2.inRange(hsv_img, lower_blue, upper_blue)
 
-	# cv2.imshow("Mask blue", mask)
+	cv2.imshow("Mask blue", mask)
 
-	kernel = np.ones((10, 10), np.uint8)
+	kernel = np.ones((15, 15), np.uint8)
 
-	mask = cv2.medianBlur(mask, 3)
+	mask = cv2.medianBlur(mask, 5)
 
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
@@ -26,7 +26,7 @@ def extract_blue(img):
 
 	mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
-	# cv2.imshow("Mask blue past morph", mask)
+	cv2.imshow("Mask blue past morph", mask)
 
 	kernel = np.ones((20, 20), np.uint8)
 
@@ -61,19 +61,21 @@ def extract_blue(img):
 
 def extract_red(img):
 	hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-	lower_red_1 = np.array([0, 60, 60])
-	upper_red_1 = np.array([10, 240, 240])
+	lower_red_1 = np.array([0, 60, 40])
+	upper_red_1 = np.array([10, 240, 180])
 	mask_1 = cv2.inRange(hsv_img, lower_red_1, upper_red_1)
-	lower_red_2 = np.array([170, 60, 60])
-	upper_red_2 = np.array([180, 240, 240])
+	lower_red_2 = np.array([170, 60, 40])
+	upper_red_2 = np.array([180, 240, 180])
 	mask_2 = cv2.inRange(hsv_img, lower_red_2, upper_red_2)
 	mask = cv2.bitwise_or(mask_1, mask_2)
 
-	# cv2.imshow("Mask red", mask)
+	cv2.imshow("Mask red", mask)
 
-	kernel = np.ones((10, 10), np.uint8)
+	kernel = np.ones((15, 15), np.uint8)
 
-	mask = cv2.medianBlur(mask, 3)
+	mask = cv2.medianBlur(mask, 5)
+
+	cv2.imshow("Mask red past blur", mask)
 
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
@@ -88,7 +90,7 @@ def extract_red(img):
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 	mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
-	# cv2.imshow("Mask red past morph", mask)
+	cv2.imshow("Mask red past morph", mask)
 
 	cnts, hier = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	extracted = []

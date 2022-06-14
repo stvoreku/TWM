@@ -22,16 +22,16 @@ font_thickness = 1
 
 # ------- Set up ------- #
 
-image = cv2.imread("detection_test_images/00051.png")
-# image = cv2.imread("detection_test_images/pol_09.png")
+#image = cv2.imread("detection_test_images/00051.png")
+image = cv2.imread("detection_test_images/pol_01.png")
 
-# image = normalize_rgb.normalize_rgb(image)
+image = normalize_rgb.normalize_rgb(image)
 display_img = image  # Keep RGB image for display even when using grayscale
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
 score_threshold = 0.95
-filter_on = False  # filters to leave only high-score detections that aren't 43_nothing
-remove_overlaps = False
+filter_on = True  # filters to leave only high-score detections that aren't 43_nothing
+remove_overlaps = True
 
 # ------- Main ------- #
 
