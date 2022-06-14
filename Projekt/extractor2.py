@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 sc = 0.8
-
+min_size = 30
 
 def extract_blue(img):
 	hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -38,34 +38,52 @@ def extract_blue(img):
 	regions = []
 	for i, c in enumerate(cnts):
 		M = cv2.moments(c)
-
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
+		print(x,y,w,h)
+		if w<min_size and h<min_size:
+			continue
+		centers = []
+		if h / w > 1.5:
+			#cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+			cY1 = cY + h//4
+			cY2 = cY - h//4
+			h = h//2
+			centers.append((cX, cY1))
+			centers.append((cX, cY2))
+		else:
+			centers.append((cX, cY))
+
 		if w > h:
-			# print(w / h)
+			print(w / h)
 			w = h
 		else:
-			# print(h / w)
+			print(h / w)
 			h = w
+
+		print(centers)
 		# cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
-		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
-		try:
-			resized_image = cv2.resize(cropped_image, (128, 128))
-			extracted.append(resized_image)
-			regions.append((cX - int(sc*h), cY - int(sc*w), cX + int(sc*h), cY + int(sc*w)))
-		except:
-			pass
+		for center in centers:
+			cY = center[1]
+			cX = center[0]
+			cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
+			try:
+				resized_image = cv2.resize(cropped_image, (128, 128))
+				extracted.append(resized_image)
+				regions.append((cX - int(sc*h), cY - int(sc*w), cX + int(sc*h), cY + int(sc*w)))
+			except:
+				pass
 	return extracted, regions
 
 
 def extract_red(img):
 	hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	lower_red_1 = np.array([0, 60, 40])
-	upper_red_1 = np.array([10, 240, 180])
+	upper_red_1 = np.array([30, 255, 200])
 	mask_1 = cv2.inRange(hsv_img, lower_red_1, upper_red_1)
 	lower_red_2 = np.array([170, 60, 40])
-	upper_red_2 = np.array([180, 240, 180])
+	upper_red_2 = np.array([180, 255, 200])
 	mask_2 = cv2.inRange(hsv_img, lower_red_2, upper_red_2)
 	mask = cv2.bitwise_or(mask_1, mask_2)
 
@@ -73,7 +91,7 @@ def extract_red(img):
 
 	kernel = np.ones((15, 15), np.uint8)
 
-	mask = cv2.medianBlur(mask, 5)
+	mask = cv2.medianBlur(mask, 3)
 
 	cv2.imshow("Mask red past blur", mask)
 
@@ -101,6 +119,20 @@ def extract_red(img):
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
+		print(x,y,w,h)
+		if w<min_size and h<min_size:
+			continue
+		centers = []
+		if h / w > 1.5:
+			# cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+			cY1 = cY + h // 4
+			cY2 = cY - h // 4
+			h = h // 2
+			centers.append((cX, cY1))
+			centers.append((cX, cY2))
+		else:
+			centers.append((cX, cY))
+
 		if w > h:
 			print(w / h)
 			w = h
@@ -108,15 +140,18 @@ def extract_red(img):
 			print(h / w)
 			h = w
 
+		print(centers)
 		# cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
-		cropped_image = img[cY - int(sc*w):cY + int(sc*w), cX - int(sc*h):(cX + int(sc*w))]
-		try:
-			resized_image = cv2.resize(cropped_image, (128, 128))
-			extracted.append(resized_image)
-			regions.append((cX - int(sc*h), cY - int(sc*w), cX + int(sc*h), cY + int(sc*w)))
-		except:
-			pass
-
+		for center in centers:
+			cY = center[1]
+			cX = center[0]
+			cropped_image = img[cY - int(sc * w):cY + int(sc * w), cX - int(sc * h):(cX + int(sc * w))]
+			try:
+				resized_image = cv2.resize(cropped_image, (128, 128))
+				extracted.append(resized_image)
+				regions.append((cX - int(sc * h), cY - int(sc * w), cX + int(sc * h), cY + int(sc * w)))
+			except:
+				pass
 	return extracted, regions
 
 
