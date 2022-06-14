@@ -11,22 +11,23 @@ import helpers.classifier_rgb_signs as classifier
 from helpers import predicted_window, normalize_rgb
 import time
 
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 # ------- Display settings ------- #
 
-rect_color = (0, 255, 0)
-rect_thickness = 2
-font = cv2.FONT_HERSHEY_SIMPLEX
-font_scale = 0.3
-font_color = (255, 0, 255)
-font_thickness = 1
+rect_color = 'red'
+rect_thickness = 1
+font_color = 'white'
+font_size = 10
 
 # ------- Set up ------- #
 
-image = cv2.imread("detection_test_images/00051.png")
-# image = cv2.imread("detection_test_images/pol_09.png")
+# image = cv2.imread("detection_test_images/00051.png")
+image = cv2.imread("detection_test_images/pol_09.png")
 
 # image = normalize_rgb.normalize_rgb(image)
-display_img = image  # Keep RGB image for display even when using grayscale
+display_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
 score_threshold = 0.95
@@ -85,6 +86,9 @@ if remove_overlaps:
 
 
 print("Drawing results...")
+
+fig, ax = plt.subplots()
+ax.imshow(display_img)
 for window in chosen_prediction_windows:
     x = window.x
     y = window.y
@@ -94,16 +98,11 @@ for window in chosen_prediction_windows:
     # text = "{}\nw/ {:.2f}% confidence".format(predicted_class, 100 * np.max(score))
     text = "{:.3f}".format(window.score)
     text2 = window.predicted_class
-    text1_pos = (x+rect_thickness, y+rect_thickness)
-    text2_pos = (x+rect_thickness, y+h-rect_thickness)
 
-    cv2.rectangle(display_img, (x, y), (x + w, y + h), rect_color, rect_thickness)
-    cv2.putText(display_img, text, text1_pos, font, font_scale, font_color, font_thickness)
-    cv2.putText(display_img, text2, text2_pos, font, font_scale, font_color, font_thickness)
+    rect = patches.Rectangle((x, y), w, h, linewidth=rect_thickness, edgecolor=rect_color, facecolor='none')
+    ax.add_patch(rect)
+    ax.text(x, y, text, fontsize=font_size, color=font_color)
+    ax.text(x, y+h, text2, fontsize=font_size, color=font_color)
 
-cv2.imshow("Window", display_img)
+plt.show()
 
-# Keep the final image, press Escape to exit
-key = cv2.waitKey(0)
-if key == 27:
-    cv2.destroyAllWindows()
