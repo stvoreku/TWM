@@ -12,8 +12,8 @@ def ceiling_division(numerator, denominator):
     return -(-numerator // denominator)
 
 
-# imfilepath = 'classification_test_images/ClassTest/'
-imfilepath = 'classification_test_images/ClassTestGTSRB/'
+imfilepath = 'classification_test_images/ClassTest/'
+# imfilepath = 'classification_test_images/ClassTestGTSRB/'
 
 filenames = os.listdir(imfilepath)
 
@@ -46,9 +46,9 @@ for i in range(count):
         display_data.append(data)
 
         if '43_nothing' in filenames[i]:
-            false_neg += 1
-        elif '43_nothing' in predicted_class:
             false_pos += 1
+        elif '43_nothing' in predicted_class:
+            false_neg += 1
         else:
             misclassified += 1
 
