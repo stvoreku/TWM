@@ -1,6 +1,3 @@
-
-# https://pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/
-
 import cv2  # opencv-python
 
 from tensorflow import keras
