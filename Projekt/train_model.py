@@ -68,7 +68,6 @@ model = Sequential([
   layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
   layers.Flatten(),
-  # layers.Dense(128, activation='relu'),
   layers.Dense(num_classes)
 ])
 

@@ -2,13 +2,13 @@ import cv2
 from extractor2 import extract_regions
 from helpers.normalize_rgb import normalize_rgb
 
-imag = cv2.imread('detection_test_images/pol_13.png')
+imag = cv2.imread('detection_test_images/00051.png')
 cv2.imshow("Before Norm", imag)
 imag = normalize_rgb(imag)
 arr, regs = extract_regions(imag)
 
-# for i,a in enumerate(arr):
-# 	cv2.imwrite(f'contour{i}.png', a)
+for i,a in enumerate(arr):
+	cv2.imwrite(f'contour{i}.png', a)
 
 
 for reg in regs:
