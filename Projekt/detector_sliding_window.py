@@ -7,7 +7,7 @@ from helpers.window_slider import scale_pyramid, sliding_window
 from tensorflow import keras
 from tensorflow import expand_dims
 
-import helpers.classifier_grayscale_shapes as classifier
+import helpers.classifier_rgb_signs as classifier
 from helpers import predicted_window
 import time
 
@@ -23,7 +23,7 @@ font_thickness = 1
 
 image = cv2.imread("detection_test_images/00033.png")
 display_img = image  # Keep RGB image for display even when using grayscale
-image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
+# image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
 # Sliding window size:
 (winW, winH) = (classifier.img_width, classifier.img_height)
@@ -37,15 +37,16 @@ scale = 1.0  # init
 # Loop over the image pyramid
 print("Processing image...")
 start = time.time()
-for resized in scale_pyramid(image, scale_division_step=scale_step, steps=4):
+for resized in scale_pyramid(image, scale_division_step=scale_step, steps=2):
     # Loop over the sliding window for each layer of the pyramid
     clone = resized.copy()
 
-    for (x, y, window) in sliding_window(resized, stepSize=32, windowSize=(winW, winH)):
+    for (x, y, window) in sliding_window(resized, stepSize=16, windowSize=(winW, winH)):
         # If the window does not meet our desired window size, ignore it
         if window.shape[0] != winH or window.shape[1] != winW:
             continue
 
+        window = cv2.cvtColor(window, cv2.COLOR_BGR2RGB)  # convert BGR to RGB
         # Classify window using CCN model:
         img_array = keras.utils.img_to_array(window)
         img_array = expand_dims(img_array, 0)
@@ -69,15 +70,15 @@ for window in prediction_windows:
         chosen_prediction_windows.append(window)
 
 # Discard overlapping windows with the same predicted class
-for window1 in chosen_prediction_windows:
-    for window2 in chosen_prediction_windows:
-        if window1 != window2 and window1.predicted_class == window2.predicted_class:
-            overlap_ratio = predicted_window.get_overlap(window1, window2)
-            if overlap_ratio > 0.4:
-                print("Found overlaps of the same class")
-                print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
-                tmp = predicted_window.get_worse_window(window1, window2)
-                chosen_prediction_windows.remove(tmp)
+# for window1 in chosen_prediction_windows:
+#     for window2 in chosen_prediction_windows:
+#         if window1 != window2 and window1.predicted_class == window2.predicted_class:
+#             overlap_ratio = predicted_window.get_overlap(window1, window2)
+#             if overlap_ratio > 0.4:
+#                 print("Found overlaps of the same class")
+#                 print(window1.predicted_class, ",", window2.predicted_class, ",", overlap_ratio)
+#                 tmp = predicted_window.get_worse_window(window1, window2)
+#                 chosen_prediction_windows.remove(tmp)
 
 
 print("Drawing results...")

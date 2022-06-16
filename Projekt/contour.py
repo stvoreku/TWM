@@ -4,8 +4,9 @@ from helpers import normalize_rgb
 # Let's load a simple image with 3 black squares
 # image = cv2.imread('detection_test_images/pol_01s.png')
 # image = cv2.imread('detection_test_images/pol_09.png')
-image = cv2.imread('detection_test_images/pol_12s.png')
-# image = cv2.imread("detection_test_images/00033.png")
+# image = cv2.imread('detection_test_images/pol_12s.png')
+# image = cv2.imread('detection_test_images/pol_15.png')
+image = cv2.imread("detection_test_images/00033.png")
 image = normalize_rgb.normalize_rgb(image)
 
 cv2.waitKey(0)
@@ -38,7 +39,7 @@ for i, con in enumerate(contours):
 color = (0, 255, 0)
 height_ratio_max = 1.5
 width_ratio_max = 1.5
-min_side_size = 20
+min_side_size = 50
 
 for i, con in enumerate(contours):
     x = int(boundRect[i][0])
@@ -47,7 +48,7 @@ for i, con in enumerate(contours):
     h = boundRect[i][3]
     if w > min_side_size and h > min_side_size:
         if w/h < width_ratio_max and h/w < height_ratio_max:
-            # cv2.drawContours(image, con, -1, color, 1)
+            cv2.drawContours(image, con, -1, color, 1)
             cv2.rectangle(image, (x, y), ((x + w), (y + h)), color, 2)
             cv2.imshow('Contours', image)
 
