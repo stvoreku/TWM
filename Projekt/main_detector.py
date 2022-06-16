@@ -21,17 +21,18 @@ rect_thickness = 1
 font_color = 'white'
 font_size = 10
 
+
 # ------- Set up ------- #
 
 # image = cv2.imread("detection_test_images/00051.png")
-image = cv2.imread("detection_test_images/pol_09.png")
+image = cv2.imread("detection_test_images/pol_15.png")
 
 # image = normalize_rgb.normalize_rgb(image)
 display_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
-score_threshold = 0.95
-filter_on = False  # filters to leave only high-score detections that aren't 43_nothing
+score_threshold = 0.75
+filter_on = True  # filters to leave only high-score detections that aren't 43_nothing
 remove_overlaps = False
 
 # ------- Main ------- #
@@ -67,7 +68,7 @@ print("Processing results...")
 if filter_on:
     chosen_prediction_windows = []
     for window in prediction_windows:
-        if window.score > 0.95 and window.predicted_class != '43_nothing':
+        if window.score > score_threshold and window.predicted_class != '43_nothing':
             chosen_prediction_windows.append(window)
 else:
     chosen_prediction_windows = prediction_windows
