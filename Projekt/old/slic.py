@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from skimage.segmentation import mark_boundaries
 
 # image = cv2.imread("detection_test_images/00033.png")
-image = cv2.imread("detection_test_images/pol_09.png")
+image = cv2.imread("../detection_test_images/pol_09.png")
 
 segments = slic(img_as_float(image), n_segments=100, sigma=5)
 
