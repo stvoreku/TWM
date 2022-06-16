@@ -3,18 +3,12 @@
 
 import cv2  # opencv-python
 
-import extractor2 as extractor
 from tensorflow import keras
 from tensorflow import expand_dims
 
 import helpers.classifier_rgb_signs as classifier
-from helpers import predicted_window, normalize_rgb
+from helpers import predicted_window, extractor2 as extractor
 import time
-
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-
-import numpy as np
 
 # ------- Display settings ------- #
 

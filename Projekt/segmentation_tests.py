@@ -1,5 +1,5 @@
 import cv2
-from extractor2 import extract_regions
+from helpers.extractor2 import extract_regions
 from helpers.normalize_rgb import normalize_rgb
 
 imag = cv2.imread('detection_test_images/00051.png')

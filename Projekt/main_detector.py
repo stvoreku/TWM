@@ -1,14 +1,10 @@
-
-# https://pyimagesearch.com/2015/03/23/sliding-windows-for-object-detection-with-python-and-opencv/
-
 import cv2  # opencv-python
 
-import extractor2 as extractor
 from tensorflow import keras
 from tensorflow import expand_dims
 
 import helpers.classifier_rgb_signs as classifier
-from helpers import predicted_window, normalize_rgb
+from helpers import predicted_window, normalize_rgb, extractor2 as extractor
 import time
 
 import matplotlib.pyplot as plt
@@ -21,14 +17,22 @@ rect_thickness = 1
 font_color = 'white'
 font_size = 10
 
-
 # ------- Set up ------- #
 
-# image = cv2.imread("detection_test_images/00051.png")
-image = cv2.imread("detection_test_images/pol_15.png")
+extractor.print_debug = False
+extractor.show_masks = False
 
-# image = normalize_rgb.normalize_rgb(image)
-display_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# image = cv2.imread('detection_test_images/pol_01s.png')
+# image = cv2.imread('detection_test_images/pol_09.png')
+image = cv2.imread('detection_test_images/pol_12s.png')
+# image = cv2.imread('detection_test_images/pol_13.png')
+# image = cv2.imread('detection_test_images/pol_15.png')
+# image = cv2.imread("detection_test_images/00033.png")
+
+image = normalize_rgb.normalize_rgb(image)
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# display_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+display_img = image
 # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
 
 score_threshold = 0.75
@@ -50,7 +54,7 @@ for i, region in enumerate(regions):
     h = region[3] - y
     window = image[y:y + h, x:x + w]
     window = cv2.resize(window, dsize=(128, 128))
-    window = cv2.cvtColor(window, cv2.COLOR_BGR2RGB)  # convert BGR to RGB
+    # window = cv2.cvtColor(window, cv2.COLOR_BGR2RGB)  # convert BGR to RGB
 
     # Classify window using CCN model:
     img_array = keras.utils.img_to_array(window)

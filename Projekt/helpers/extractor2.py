@@ -4,6 +4,10 @@ import numpy as np
 sc = 0.8
 min_size = 30
 
+show_masks = False
+print_debug = False
+
+
 def extract_blue(img):
 	hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -12,21 +16,20 @@ def extract_blue(img):
 
 	mask = cv2.inRange(hsv_img, lower_blue, upper_blue)
 
-	cv2.imshow("Mask blue", mask)
+	if show_masks:
+		cv2.imshow("Mask blue", mask)
 
 	kernel = np.ones((15, 15), np.uint8)
-
 	mask = cv2.medianBlur(mask, 5)
-
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
 	contours, hier = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
 	cv2.drawContours(mask, contours, -1, color=(255, 255, 255), thickness=cv2.FILLED)
 
 	mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
-	cv2.imshow("Mask blue past morph", mask)
+	if show_masks:
+		cv2.imshow("Mask blue past morph", mask)
 
 	kernel = np.ones((20, 20), np.uint8)
 
@@ -41,8 +44,11 @@ def extract_blue(img):
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
-		print(x,y,w,h)
-		if w<min_size and h<min_size:
+
+		if print_debug:
+			print(x, y, w, h)
+
+		if w < min_size and h < min_size:
 			continue
 		centers = []
 		if h / w > 1.5:
@@ -56,13 +62,17 @@ def extract_blue(img):
 			centers.append((cX, cY))
 
 		if w > h:
-			print(w / h)
+			if print_debug:
+				print(w / h)
 			w = h
 		else:
-			print(h / w)
+			if print_debug:
+				print(h / w)
 			h = w
 
-		print(centers)
+		if print_debug:
+			print(centers)
+
 		# cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
 		for center in centers:
 			cY = center[1]
@@ -87,13 +97,15 @@ def extract_red(img):
 	mask_2 = cv2.inRange(hsv_img, lower_red_2, upper_red_2)
 	mask = cv2.bitwise_or(mask_1, mask_2)
 
-	cv2.imshow("Mask red", mask)
+	if show_masks:
+		cv2.imshow("Mask red", mask)
 
 	kernel = np.ones((15, 15), np.uint8)
 
 	mask = cv2.medianBlur(mask, 3)
 
-	cv2.imshow("Mask red past blur", mask)
+	if show_masks:
+		cv2.imshow("Mask red past blur", mask)
 
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
@@ -108,7 +120,8 @@ def extract_red(img):
 	mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 	mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
-	cv2.imshow("Mask red past morph", mask)
+	if show_masks:
+		cv2.imshow("Mask red past morph", mask)
 
 	cnts, hier = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	extracted = []
@@ -119,8 +132,11 @@ def extract_red(img):
 		cX = int(M["m10"] / M["m00"])
 		cY = int(M["m01"] / M["m00"])
 		x, y, w, h = cv2.boundingRect(c)
-		print(x,y,w,h)
-		if w<min_size and h<min_size:
+
+		if print_debug:
+			print(x, y, w, h)
+
+		if w < min_size and h < min_size:
 			continue
 		centers = []
 		if h / w > 1.5:
@@ -134,14 +150,18 @@ def extract_red(img):
 			centers.append((cX, cY))
 
 		if w > h:
-			print(w / h)
+			if print_debug:
+				print(w / h)
 			w = h
 		else:
-			print(h / w)
+			if print_debug:
+				print(h / w)
 			h = w
 
-		print(centers)
+		if print_debug:
+			print(centers)
 		# cv2.rectangle(img, (cX - int(0.8*h), cY - int(0.8*w)), (cX + int(0.8*w), cY + int(0.8*h)), (0, 255, 0), 2)
+
 		for center in centers:
 			cY = center[1]
 			cX = center[0]
